@@ -1,6 +1,8 @@
 <?php
+
 $controllers = array(
   'home' => ['index', 'error'],
+  'dmdichvu' => ['index', 'error'],
   'sanpham' => [
     'dssp',
     'index',
@@ -30,5 +32,5 @@ include_once('controllers/' . $controller . '_controller.php');
 
 // Tạo ra tên controller class từ các giá trị lấy được từ URL sau đó gọi ra để hiển thị trả về cho người dùng.
 $tenClass = str_replace('_', '', ucwords($controller, '_')) . 'Controller';
-$controller = new $tenClass;
+$controller = new $tenClass();
 $controller->$action();
