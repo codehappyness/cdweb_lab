@@ -1,11 +1,9 @@
 <div class="row justify-content-center">
   <div class="col-md-8">
-
     <div class="card shadow-sm">
       <div class="card-header bg-primary text-white">
         <h4 class="mb-0">Thông tin chi tiết Nhà cung cấp</h4>
       </div>
-
       <div class="card-body">
         <?php if (isset($item)): ?>
           <table class="table table-bordered table-striped mb-0">
@@ -52,7 +50,7 @@
           Quay lại
         </a>
         <?php if (isset($item)): ?>
-          <a href="edit.php?id=<?= $item->id ?>" class="btn btn-warning">
+          <a href="?controller=nhacungcap&action=edit&&id=<?= $item->id ?>" class="btn btn-primary">
             Chỉnh sửa
           </a>
         <?php endif; ?>

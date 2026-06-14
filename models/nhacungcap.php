@@ -40,16 +40,9 @@ class NhaCungCap
   public static function getItem($id)
   {
     $db = DB::getInstance();
-    // 1. Sửa 'WHER' thành 'WHERE'
     $stmt = $db->prepare('SELECT * FROM nha_cung_cap WHERE id = ?');
-
-    // 2. Truyền tham số $id vào hàm execute
     $stmt->execute([$id]);
-
-    // Lấy ra 1 dòng dữ liệu duy nhất
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // 3. Kiểm tra xem có dữ liệu hay không
     if ($item) {
       return new NhaCungCap(
         $item['id'],
@@ -65,7 +58,6 @@ class NhaCungCap
   public static function update($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
   {
     $db = DB::getInstance();
-
     $sql = "UPDATE nha_cung_cap 
             SET ten = ?, loai_dich_vu = ?, dia_chi = ?, so_dien_thoai = ? 
             WHERE id = ?";
@@ -91,14 +83,9 @@ class NhaCungCap
   public static function add($ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
   {
     $db = DB::getInstance();
-
-    // Câu lệnh SQL INSERT (Bỏ qua cột id vì nó tự động tăng)
     $sql = "INSERT INTO nha_cung_cap (ten, loai_dich_vu, dia_chi, so_dien_thoai) 
             VALUES (?, ?, ?, ?)";
-
     $stmt = $db->prepare($sql);
-
-    // Thực thi và truyền các tham số tương ứng với 4 dấu ?
     return $stmt->execute([
       $ten,
       $loai_dich_vu,

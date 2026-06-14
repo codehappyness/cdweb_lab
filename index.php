@@ -4,6 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once('connection.php');
+require_once('helpers/helper.php');
 if (isset($_GET['controller'])) {
   $controller = $_GET['controller'];
   if (isset($_GET['action'])) {

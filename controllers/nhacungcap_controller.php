@@ -13,6 +13,7 @@ class NhacungcapController extends BaseController
     $data = array('list' => $nhacungcaps);
     $this->render('index', $data);
   }
+
   public function detail()
   {
     $id = $_GET['id'] ?? null;
@@ -65,38 +66,108 @@ class NhacungcapController extends BaseController
       echo "Lỗi: Không tìm thấy nhà cung cấp với ID này!";
     }
   }
-  public function update()
+  public function storej()
   {
-    // 1. Early Return: Chặn ngay từ đầu nếu không phải phương thức POST
+
+    // Nếu muốn hiện thị lại trang danh sách sản phẩm
+    // $this->index();
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
       header("Location: index.php?controller=nhacungcap&status=error");
       exit();
     }
 
-    // 2. Lấy và làm sạch dữ liệu
     $id = $_POST['id'] ?? null;
     $ten = trim($_POST['ten'] ?? '');
     $loai_dich_vu = trim($_POST['loai_dich_vu'] ?? '');
     $dia_chi = trim($_POST['dia_chi'] ?? '');
     $so_dien_thoai = trim($_POST['so_dien_thoai'] ?? '');
 
-    // 3. Xử lý logic Thêm hoặc Sửa
     if (empty($id)) {
-      // Nếu không có ID -> Gọi hàm Thêm mới
       $ket_qua = NhaCungCap::add($ten, $loai_dich_vu, $dia_chi, $so_dien_thoai);
-      $status_success = 'added'; // Nên tách biệt trạng thái thêm để dễ hiển thị thông báo
+      $status_success = 'added';
     } else {
-      // Nếu có ID -> Gọi hàm Cập nhật
+      $status_success = 'updated';
+      $nha_cung_cap_ton_tai = NhaCungCap::getItem($id); // Thay bằng tên hàm lấy chi tiết trong Model của bạn
+
+      if (!$nha_cung_cap_ton_tai) {
+        // Nếu không tìm thấy nhà cung cấp trong DB -> Điều hướng về kèm lỗi
+        header("Location: index.php?controller=nhacungcap&status=not_found");
+        exit();
+      }
+
+      // Nếu tồn tại thì mới tiến hành update
       $ket_qua = NhaCungCap::update($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai);
       $status_success = 'updated';
     }
 
-    // 4. Chuyển hướng một lần duy nhất ở cuối hàm
-    // Nếu $ket_qua là true thì lấy biến success, ngược lại là 'error'
     $status = $ket_qua ? $status_success : 'error';
 
     header("Location: index.php?controller=nhacungcap&status={$status}");
     exit();
+  }
+  public function store()
+  {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+      back_with('error', 'Phương thức yêu cầu không hợp lệ!');
+    }
+
+    $id = $_POST['id'] ?? null;
+    $ten = trim($_POST['ten'] ?? '');
+    $loai_dich_vu = trim($_POST['loai_dich_vu'] ?? '');
+    $dia_chi = trim($_POST['dia_chi'] ?? '');
+    $so_dien_thoai = trim($_POST['so_dien_thoai'] ?? '');
+
+    // 1. KHỞI TẠO MẢNG LỖI
+    $errors = [];
+
+    // 2. KIỂM TRA TỪNG TRƯỜNG (VALIDATION)
+    if (empty($ten)) {
+      $errors['ten'] = 'Tên nhà cung cấp không được để trống.';
+    } elseif (strlen($ten) < 3) {
+      $errors['ten'] = 'Tên nhà cung cấp phải có ít nhất 3 ký tự.';
+    }
+
+    if (empty($so_dien_thoai)) {
+      $errors['so_dien_thoai'] = 'Vui lòng nhập số điện thoại.';
+    } elseif (!is_numeric($so_dien_thoai)) {
+      $errors['so_dien_thoai'] = 'Số điện thoại chỉ được chứa chữ số.';
+    }
+
+    // 3. NẾU CÓ LỖI -> QUAY LẠI VÀ BÁO LỖI
+    if (!empty($errors)) {
+      // Dùng hàm mới viết, nó sẽ tự động gửi mảng $errors và giữ lại old input
+      back_with_errors($errors, 'Có lỗi xảy ra, vui lòng kiểm tra các trường màu đỏ!');
+    }
+
+    // 4. NẾU KHÔNG CÓ LỖI -> TIẾP TỤC LƯU DATABASE
+    if (empty($id)) {
+      $ket_qua = NhaCungCap::add($ten, $loai_dich_vu, $dia_chi, $so_dien_thoai);
+      $status_success = 'Thêm mới nhà cung cấp thành công!';
+      $type = 'success';
+    } else {
+      $nha_cung_cap_ton_tai = NhaCungCap::getItem($id);
+      if (!$nha_cung_cap_ton_tai) {
+        back_with('error', 'Không tìm thấy nhà cung cấp này!');
+      }
+      $ket_qua = NhaCungCap::update($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai);
+      $status_success = 'Cập nhật thành công!';
+      $type = 'success';
+    }
+
+    // if ($ket_qua) {
+    //   back_with($type, $status_success);
+    // } else {
+    //   back_with('error', 'Có lỗi khi lưu vào cơ sở dữ liệu!', true);
+    // }
+    // XỬ LÝ CHUYỂN HƯỚNG CUỐI CÙNG
+    if ($ket_qua) {
+      // THÀNH CÔNG: Chuyển hướng về trang danh sách (Giống redirect()->route('nhacungcap.index')->with(...))
+      $url_danh_sach = route('nhacungcap', 'index');
+      redirect_with($url_danh_sach, 'success', $status_success);
+    } else {
+      // THẤT BẠI KHI LƯU DB: Quay lại form
+      back_with('error', 'Lỗi hệ thống, không thể lưu dữ liệu!', true);
+    }
   }
   public function delete()
   {

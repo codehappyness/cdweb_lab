@@ -2,7 +2,7 @@
   <div class="col-md-8">
 
     <div class="card shadow-sm">
-      <div class="card-header bg-warning text-dark">
+      <div class="card-header bg-primary text-white">
         <h4 class="mb-0">
           <?= (!empty($item->id)) ? 'Chỉnh sửa thông tin Nhà cung cấp' : 'Thêm mới Nhà cung cấp' ?>
         </h4>
@@ -10,45 +10,52 @@
 
       <div class="card-body">
         <?php if (isset($item)): ?>
-          <!-- Form gửi dữ liệu qua phương thức POST -->
-          <form action="?controller=nhacungcap&action=update" method="POST">
+          <?php if (isset($_SESSION['flash_message'])): ?>
+            <?php
+            $flash = $_SESSION['flash_message'];
+            $alert_class = ($flash['type'] === 'success') ? 'alert-success' : 'alert-danger';
+            ?>
+            <div class="alert <?= $alert_class ?>">
+              <?= htmlspecialchars($flash['message']) ?>
+            </div>
+            <?php unset($_SESSION['flash_message']); ?>
+          <?php endif; ?>
 
-            <!-- BẮT BUỘC: Trường ẩn chứa ID để server biết đang sửa bản ghi nào -->
-            <input type="hidden" name="id" value="<?= htmlspecialchars($item->id) ?>">
+          <form action="index.php?controller=nhacungcap&action=store" method="POST">
+            <input type="hidden" name="id" value="<?= old('id', $item->id) ?>">
 
-            <div class="mb-3">
-              <label for="ten" class="form-label fw-bold">Tên nhà cung cấp <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="ten" name="ten"
-                value="<?= htmlspecialchars($item->ten) ?>" required>
+            <div class="form-group mb-3">
+              <label>Tên nhà cung cấp <span class="text-danger">*</span></label>
+              <input type="text" name="ten" class="form-control <?= has_error('ten') ?>" value="<?= old('ten', $item->ten) ?>">
+              <?= error('ten') ?>
             </div>
 
-            <div class="mb-3">
-              <label for="loai_dich_vu" class="form-label fw-bold">Loại dịch vụ</label>
-              <input type="text" class="form-control" id="loai_dich_vu" name="loai_dich_vu"
-                value="<?= htmlspecialchars($item->loai_dich_vu) ?>">
+            <div class="form-group mb-3">
+              <label>Loại dịch vụ</label>
+              <input type="text" name="loai_dich_vu" class="form-control <?= has_error('loai_dich_vu') ?>" value="<?= old('loai_dich_vu', $item->loai_dich_vu) ?>">
+              <?= error('loai_dich_vu') ?>
             </div>
 
-            <div class="mb-3">
-              <label for="dia_chi" class="form-label fw-bold">Địa chỉ</label>
-              <textarea class="form-control" id="dia_chi" name="dia_chi" rows="3"><?= htmlspecialchars($item->dia_chi) ?></textarea>
+            <div class="form-group mb-3">
+              <label>Địa chỉ</label>
+              <input type="text" name="dia_chi" class="form-control <?= has_error('dia_chi') ?>" value="<?= old('dia_chi', $item->dia_chi) ?>">
+              <?= error('dia_chi') ?>
             </div>
 
-            <div class="mb-3">
-              <label for="so_dien_thoai" class="form-label fw-bold">Số điện thoại</label>
-              <input type="tel" class="form-control" id="so_dien_thoai" name="so_dien_thoai"
-                value="<?= htmlspecialchars($item->so_dien_thoai) ?>">
+            <div class="form-group mb-3">
+              <label>Số điện thoại <span class="text-danger">*</span></label>
+              <input type="text" name="so_dien_thoai" class="form-control <?= has_error('so_dien_thoai') ?>" value="<?= old('so_dien_thoai', $item->so_dien_thoai) ?>">
+              <?= error('so_dien_thoai') ?>
             </div>
 
-            <hr>
-
-            <div class="d-flex justify-content-end mx-2">
-              <!-- Nút hủy quay lại trang trước -->
-              <a href="javascript:history.back()" class="btn btn-secondary">Hủy bỏ</a>
-              <!-- Nút submit lưu dữ liệu -->
-              <button type="submit" class="btn btn-success ms-2">Lưu thay đổi</button>
-            </div>
-
+            <button type="submit" class="btn btn-primary">Lưu dữ liệu</button>
           </form>
+
+          <?php
+          unset($_SESSION['old_input']);
+          unset($_SESSION['errors']); // Thêm dòng này để xóa mảng lỗi sau khi hiển thị xong
+          ?>
+
         <?php else: ?>
           <div class="alert alert-danger mb-0" role="alert">
             Không tìm thấy dữ liệu nhà cung cấp để chỉnh sửa!
