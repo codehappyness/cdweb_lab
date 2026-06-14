@@ -9,7 +9,6 @@ class NhaCungCap
 
   public function __construct($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
   {
-    // Đã bổ sung gán đầy đủ các thuộc tính
     $this->id = $id;
     $this->ten = $ten;
     $this->loai_dich_vu = $loai_dich_vu;
@@ -24,7 +23,6 @@ class NhaCungCap
     $result = $db->prepare('SELECT * FROM nha_cung_cap');
     $result->setFetchMode(PDO::FETCH_ASSOC);
     $result->execute();
-
     foreach ($result->fetchAll() as $item) {
       $list[] = new NhaCungCap(
         $item['id'],
@@ -37,6 +35,7 @@ class NhaCungCap
 
     return $list;
   }
+
   public static function getItem($id)
   {
     $db = DB::getInstance();
@@ -52,9 +51,9 @@ class NhaCungCap
         $item['so_dien_thoai']
       );
     }
-    // Trả về null nếu không tìm thấy nhà cung cấp nào với ID này
     return null;
   }
+
   public static function update($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
   {
     $db = DB::getInstance();
@@ -72,14 +71,17 @@ class NhaCungCap
       $id
     ]);
   }
+
   public static function delete($id)
   {
     $db = DB::getInstance();
     $sql = "DELETE FROM nha_cung_cap WHERE id = ?";
     $stmt = $db->prepare($sql);
+    
 
     return $stmt->execute([$id]);
   }
+
   public static function add($ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
   {
     $db = DB::getInstance();

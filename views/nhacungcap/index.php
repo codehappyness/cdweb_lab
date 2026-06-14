@@ -11,7 +11,6 @@
 
   <div class="card-body">
     <div class="table-responsive">
-
       <?php if (isset($_SESSION['flash_message'])): ?>
         <?php
         $flash = $_SESSION['flash_message'];
