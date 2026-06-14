@@ -3,6 +3,7 @@
 $controllers = array(
   'home' => ['index', 'error'],
   'dmdichvu' => ['index', 'error'],
+  'nhacungcap' => ['index', 'error', 'detail', 'edit', 'update', 'delete', 'add'],
   'sanpham' => [
     'dssp',
     'index',

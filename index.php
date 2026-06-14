@@ -23,4 +23,5 @@ if (isset($_GET['controller'])) {
   $controller = 'home';
   $action = 'index';
 }
+DB::getInstance();
 require_once('router.php');

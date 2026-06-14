@@ -6,8 +6,8 @@ class DB
   {
     if (!isset(self::$instance)) {
       try {
-        self::$instance = new PDO('
-                        mysql:host=localhost;dbname=qlbanhangdb', 'user', '');
+        // Viết liền mạch chuỗi kết nối
+        self::$instance = new PDO('mysql:host=localhost;dbname=qltaichinh', 'cdweb', 'Cdweb@1235');
         self::$instance->exec("SET NAMES 'utf8'");
       } catch (PDOException $ex) {
         die($ex->getMessage());
