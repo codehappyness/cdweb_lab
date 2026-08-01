@@ -28,15 +28,36 @@ class Hoadon
     $this->ngay_cap_nhat = $ngay_cap_nhat;
   }
 
-  static function getAll()
+  static function getAll($tu_ngay = null, $den_ngay = null, $nha_cung_cap_id = null)
   {
     $list = [];
     $db = DB::getInstance();
-    $result = $db->prepare('SELECT * FROM hoa_don ORDER BY ngay_tao DESC');
-    $result->setFetchMode(PDO::FETCH_ASSOC);
-    $result->execute();
+    
+    $sql = 'SELECT * FROM hoa_don WHERE 1=1';
+    $params = [];
 
-    foreach ($result->fetchAll() as $item) {
+    if (!empty($tu_ngay)) {
+        $sql .= ' AND ngay_tao >= ?';
+        $params[] = $tu_ngay . ' 00:00:00';
+    }
+    
+    if (!empty($den_ngay)) {
+        $sql .= ' AND ngay_tao <= ?';
+        $params[] = $den_ngay . ' 23:59:59';
+    }
+    
+    if (!empty($nha_cung_cap_id)) {
+        $sql .= ' AND nha_cung_cap_id = ?';
+        $params[] = $nha_cung_cap_id;
+    }
+
+    $sql .= ' ORDER BY ngay_tao DESC';
+    
+    $stmt = $db->prepare($sql);
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute($params);
+
+    foreach ($stmt->fetchAll() as $item) {
       $list[] = new Hoadon(
         $item['id'],
         $item['nha_cung_cap_id'],
@@ -143,5 +164,50 @@ class Hoadon
 
     // fetchColumn() trả về giá trị của cột đầu tiên (chính là kết quả của COUNT)
     return $stmt->fetchColumn();
+  }
+
+  // Lấy các hóa đơn sắp đến hạn (còn <= 7 ngày) và chưa thanh toán
+  public static function getCanhBaoDenHan()
+  {
+    $list = [];
+    $db = DB::getInstance();
+    $sql = "SELECT * FROM hoa_don 
+            WHERE trang_thai = 0 
+            AND ngay_han_chot >= NOW() 
+            AND ngay_han_chot <= DATE_ADD(NOW(), INTERVAL 7 DAY)
+            ORDER BY ngay_han_chot ASC";
+    $result = $db->prepare($sql);
+    $result->execute();
+
+    foreach ($result->fetchAll(PDO::FETCH_ASSOC) as $item) {
+      $list[] = new Hoadon(
+        $item['id'],
+        $item['nha_cung_cap_id'],
+        $item['loai_hoa_don'],
+        $item['ky_cuoc'],
+        $item['so_tien_can_dong'],
+        $item['chi_so_tieu_thu'],
+        $item['ngay_han_chot'],
+        $item['trang_thai'],
+        $item['ghi_chu_nen_tang'],
+        $item['ngay_tao'],
+        $item['ngay_cap_nhat']
+      );
+    }
+    return $list;
+  }
+
+  // Thống kê theo tháng
+  public static function getThongKeTheoThang()
+  {
+    $db = DB::getInstance();
+    $sql = "SELECT DATE_FORMAT(ngay_tao, '%m/%Y') as thang, 
+                   SUM(so_tien_can_dong) as tong_tien 
+            FROM hoa_don 
+            GROUP BY thang
+            ORDER BY MIN(ngay_tao) ASC";
+    $result = $db->prepare($sql);
+    $result->execute();
+    return $result->fetchAll(PDO::FETCH_ASSOC);
   }
 }

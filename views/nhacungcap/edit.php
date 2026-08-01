@@ -2,10 +2,11 @@
   <div class="col-md-8">
 
     <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h4 class="mb-0">
           <?= (!empty($item->id)) ? 'Chỉnh sửa thông tin Nhà cung cấp' : 'Thêm mới Nhà cung cấp' ?>
         </h4>
+        <a href="?controller=nhacungcap&action=index" class="btn btn-light btn-sm">Quay lại</a>
       </div>
 
       <div class="card-body">

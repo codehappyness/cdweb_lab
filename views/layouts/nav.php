@@ -10,9 +10,9 @@
   <hr class="sidebar-divider my-0">
   <!-- Nav Item - Dashboard -->
   <li class="nav-item">
-    <a class="nav-link" href="index.php">
+    <a class="nav-link" href="/?controller=thongke">
       <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Thông kê</span></a>
+      <span>Thống kê</span></a>
   </li>
 
   <!-- Divider -->
@@ -23,7 +23,11 @@
     Danh mục
   </div>
 
-
+  <li class="nav-item">
+    <a class="nav-link" href="/?controller=hoadon">
+      <i class="fas fa-fw fa-file-invoice"></i>
+      <span>Quản lý Hóa đơn</span></a>
+  </li>
 
   <!-- Nav Item - Charts -->
   <li class="nav-item">

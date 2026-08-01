@@ -126,10 +126,11 @@ class NhacungcapController extends BaseController
     }
 
     $nhacungcap = NhaCungCap::getItem($id);
-    if($nhacungcap)
+    if(!$nhacungcap)
     {
       $url_danh_sach = route('nhacungcap', 'index');
       redirect_with($url_danh_sach, 'error', 'Không tìm thấy nhà cung cấp cần xóa');
+      return;
     }
 
     $soHoadon = Hoadon::countByNhaCungCapId($nhacungcap->id);

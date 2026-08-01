@@ -1,0 +1,50 @@
+@startuml
+package "Client-Side (Trình duyệt)" {
+  [Giao diện Web (HTML/CSS/JS)] as UI
+}
+
+package "Server-Side (PHP MVC)" {
+  [Router (router.php)] as Router
+  
+  folder "Controllers" {
+    [HoaDonController] as HC
+    [NhaCungCapController] as NC
+    [ThongKeController] as TC
+  }
+  
+  folder "Models" {
+    [HoaDon Model] as HM
+    [NhaCungCap Model] as NM
+    [ChungTu Model] as CM
+  }
+  
+  folder "Views" {
+    [View Templates (.php)] as VT
+  }
+  
+  [Database Connection\n(PDO)] as DBConn
+}
+
+database "Cơ sở dữ liệu (MySQL)" as DB
+
+UI --> Router : HTTP Request
+Router --> HC : Route /hoadon
+Router --> NC : Route /nhacungcap
+Router --> TC : Route /thongke
+
+HC --> HM : Uses
+NC --> NM : Uses
+TC --> HM : Uses
+
+HM --> DBConn : SQL Queries
+NM --> DBConn : SQL Queries
+CM --> DBConn : SQL Queries
+
+DBConn --> DB : Connect/Execute
+
+HC --> VT : Render
+NC --> VT : Render
+TC --> VT : Render
+
+VT --> UI : HTML Response
+@enduml

@@ -4,6 +4,8 @@ $controllers = array(
   'home' => ['index', 'error'],
   'dmdichvu' => ['index', 'error'],
   'nhacungcap' => ['index', 'error', 'detail', 'edit', 'delete', 'add', 'store'],
+  'hoadon' => ['index', 'add', 'store', 'edit', 'update', 'delete', 'pay', 'store_pay'],
+  'thongke' => ['index'],
   'sanpham' => [
     'dssp',
     'index',

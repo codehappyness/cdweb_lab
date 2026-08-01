@@ -1,0 +1,28 @@
+@startuml
+skinparam conditionStyle inside
+
+start
+:Nhận thông báo cước từ Nhà cung cấp;
+:Đăng nhập hệ thống;
+:Nhập dữ liệu hóa đơn mới\n(Kỳ cước, số tiền, chỉ số tiêu thụ, hạn cuối);
+
+if (Thanh toán ngay?) then (Có)
+  :Chuyển tiền qua nền tảng giao dịch (VCB, VPBank...);
+else (Không)
+  :Lưu hóa đơn (Trạng thái: Chưa thanh toán);
+  repeat
+    :Hệ thống theo dõi thời gian;
+    if (Sắp đến Hạn thanh toán (<= 7 ngày)?) then (Có)
+      :Hiển thị Cảnh báo đến hạn trên màn hình Danh sách;
+    else (Không)
+    endif
+  repeat while (Người dùng chưa thanh toán)
+  :Tiến hành thanh toán qua nền tảng giao dịch;
+endif
+
+:Ghi nhận đối chiếu giao dịch\n(Nhập số tiền đã thanh toán, chọn Nền tảng trên dropdown);
+:Upload đính kèm hình ảnh biên lai / chụp màn hình (Chứng từ);
+:Hệ thống cập nhật Trạng thái hóa đơn = Đã thanh toán;
+:Lưu trữ dữ liệu phục vụ thống kê & tìm kiếm;
+stop
+@enduml

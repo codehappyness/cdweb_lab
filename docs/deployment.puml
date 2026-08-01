@@ -1,0 +1,22 @@
+@startuml
+node "Client Device" <<Device>> {
+  node "Web Browser" <<Browser>> {
+    artifact "HTML/CSS/JS UI"
+  }
+}
+
+node "Web Server (Apache/Nginx)" <<Server>> {
+  node "PHP 8.x Runtime" <<Execution Environment>> {
+    artifact "Mã nguồn MVC (PHP)"
+  }
+}
+
+node "Database Server" <<Server>> {
+  database "MySQL / MariaDB" <<DBMS>> {
+    artifact "qltaichinh Schema"
+  }
+}
+
+"Client Device" ..> "Web Server (Apache/Nginx)" : HTTP/HTTPS
+"Web Server (Apache/Nginx)" ..> "Database Server" : TCP/IP (Port 3306)
+@enduml

@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class NhaCungCap {
+  + id : int
+  + ten : string
+  + loai_dich_vu : string
+  + dia_chi : string
+  + so_dien_thoai : string
+  + nguoi_dung_id : int
+  --
+  + __construct()
+  + {static} getAll() : array
+  + {static} getItem(id) : NhaCungCap
+  + {static} add(ten, loai_dich_vu, dia_chi, so_dien_thoai) : bool
+  + {static} update(id, ten, loai_dich_vu, dia_chi, so_dien_thoai) : bool
+  + {static} delete(id) : bool
+}
+
+class Hoadon {
+  + id : int
+  + nha_cung_cap_id : int
+  + loai_hoa_don : int
+  + ky_cuoc : string
+  + so_tien_can_dong : float
+  + chi_so_tieu_thu : string
+  + ngay_han_chot : datetime
+  + trang_thai : int
+  + ghi_chu_nen_tang : string
+  + ngay_tao : datetime
+  + ngay_cap_nhat : datetime
+  --
+  + __construct()
+  + {static} getAll(tu_ngay, den_ngay, nha_cung_cap_id) : array
+  + {static} getItem(id) : Hoadon
+  + {static} add(nha_cung_cap_id, loai_hoa_don, ky_cuoc, so_tien, chi_so, ngay_han, trang_thai) : bool
+  + {static} update(id, nha_cung_cap_id, loai_hoa_don, ky_cuoc, so_tien, chi_so, ngay_han, trang_thai, ghi_chu) : bool
+  + {static} delete(id) : bool
+  + {static} countByNhaCungCapId(nha_cung_cap_id) : int
+  + {static} getCanhBaoDenHan() : array
+  + {static} getThongKeTheoThang() : array
+}
+
+class ChungTu {
+  + id : int
+  + hoa_don_id : int
+  + loai_chung_tu : string
+  + ngay_tai_len : datetime
+  + duong_dan_anh : string
+  --
+  + __construct()
+  + {static} getByHoaDonId(hoa_don_id) : ChungTu
+  + {static} add(hoa_don_id, loai_chung_tu, duong_dan_anh) : bool
+}
+
+class NguoiDung {
+  + id : int
+  + ho_ten : string
+  + ngay_sinh : datetime
+  + gioi_tinh : int
+  + mat_khau : string
+}
+
+NhaCungCap "1" -- "*" Hoadon : "Sở hữu"
+Hoadon "1" -- "0..1" ChungTu : "Gắn với"
+NguoiDung "1" -- "*" NhaCungCap : "Tạo và quản lý"
+
+@enduml

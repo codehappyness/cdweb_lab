@@ -1,0 +1,42 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "nha_cung_cap" as NhaCungCap {
+  * id : BIGINT <<PK>>
+  --
+  * ten : VARCHAR(155)
+  * loai_dich_vu : VARCHAR(50)
+  * dia_chi : VARCHAR(255)
+  * so_dien_thoai : VARCHAR(100)
+  nguoi_dung_id : BIGINT
+}
+
+entity "hoa_don" as HoaDon {
+  * id : BIGINT <<PK>>
+  --
+  * nha_cung_cap_id : BIGINT <<FK>>
+  * ky_cuoc : VARCHAR(20)
+  * so_tien_can_dong : FLOAT
+  chi_so_tieu_thu : VARCHAR(100)
+  * ngay_han_chot : DATETIME
+  * trang_thai : VARCHAR(50)
+  ghi_chu_nen_tang : VARCHAR(100)
+  ngay_tao : DATETIME
+  ngay_cap_nhat : DATETIME
+  nguoi_dung_id : BIGINT
+}
+
+entity "chung_tu_dien_tu" as ChungTuDienTu {
+  * id : BIGINT <<PK>>
+  --
+  * hoa_don_id : BIGINT <<FK>>
+  * duong_dan_anh : VARCHAR(255)
+  loai_chung_tu : VARCHAR(50)
+  ngay_tai_len : DATETIME
+}
+
+NhaCungCap ||--o{ HoaDon : "1 nhà cung cấp có nhiều hóa đơn"
+HoaDon ||--o| ChungTuDienTu : "1 hóa đơn đính kèm 1 chứng từ điện tử"
+
+@enduml

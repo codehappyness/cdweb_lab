@@ -1,0 +1,49 @@
+@startuml
+package "Views" {
+  class "hoadon/index.php"
+  class "hoadon/edit.php"
+  class "hoadon/pay.php"
+  class "thongke/index.php"
+}
+
+package "Controllers" {
+  class "HoaDonController" {
+    + index()
+    + add()
+    + edit()
+    + store()
+    + delete()
+    + pay()
+    + store_pay()
+  }
+  class "ThongKeController" {
+    + index()
+  }
+}
+
+package "Models" {
+  class "HoaDon" {
+    + db: Connection
+    + getAll($tu_ngay, $den_ngay, $nha_cung_cap_id)
+    + getCanhBaoDenHan()
+    + getThongKeTheoThang()
+    + add()
+    + update()
+    + delete()
+    + countByNhaCungCapId()
+  }
+  class "ChungTu" {
+    + db: Connection
+    + getByHoaDonId()
+    + add()
+  }
+}
+
+class "DB (connection.php)" as DB {
+  + static getInstance(): PDO
+}
+
+Controllers ..> Models : "Lấy & Lưu dữ liệu"
+Controllers ..> Views : "Truyền data & Render giao diện"
+Models --> DB : "Thực thi SQL"
+@enduml

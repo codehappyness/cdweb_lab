@@ -1,0 +1,17 @@
+@startuml
+[*] --> ChuaThanhToan : Tạo hóa đơn mới
+
+state ChuaThanhToan {
+  [*] --> BinhThuong
+  BinhThuong --> CanhBao : Còn <= 7 ngày đến hạn
+  CanhBao --> QuaHan : Quá ngày hạn chót
+}
+
+ChuaThanhToan --> DaThanhToan : Người dùng thanh toán & Upload chứng từ
+
+state DaThanhToan {
+  [*] --> HoanTat : Ghi nhận thành công
+}
+
+DaThanhToan --> [*]
+@enduml

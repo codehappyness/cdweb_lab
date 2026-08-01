@@ -1,0 +1,34 @@
+@startuml
+autonumber
+actor "Người dùng" as User
+boundary "Giao diện Thanh toán\n(pay.php)" as View
+control "HoaDonController" as Controller
+entity "HoaDon Model" as Hoadon
+entity "ChungTu Model" as ChungTu
+database "MySQL Database" as DB
+
+User -> View : Bấm "Thanh toán" hóa đơn
+View --> User : Hiển thị Form nhập (Nền tảng GD, Ảnh)
+User -> View : Nhập thông tin & Upload ảnh, Bấm "Lưu"
+View -> Controller : POST /store_pay (id, nền tảng, file)
+activate Controller
+
+Controller -> Controller : Validate dữ liệu & Lưu file ảnh lên máy chủ
+Controller -> Hoadon : Cập nhật (trạng thái=1, nền tảng)
+activate Hoadon
+Hoadon -> DB : UPDATE hoa_don
+DB --> Hoadon : Thành công
+Hoadon --> Controller : OK
+deactivate Hoadon
+
+Controller -> ChungTu : add(hoa_don_id, loai_chung_tu, url)
+activate ChungTu
+ChungTu -> DB : INSERT INTO chung_tu_dien_tu
+DB --> ChungTu : Thành công
+ChungTu --> Controller : OK
+deactivate ChungTu
+
+Controller --> View : Redirect kèm thông báo Thành công
+deactivate Controller
+View --> User : Hiển thị Danh sách & Badge "Đã thanh toán"
+@enduml
