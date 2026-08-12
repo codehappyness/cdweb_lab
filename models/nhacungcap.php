@@ -3,96 +3,103 @@ class NhaCungCap
 {
   public $id;
   public $ten;
-  public $loai_dich_vu;
   public $dia_chi;
   public $so_dien_thoai;
+  public $nguoi_dung_id;
 
-  public function __construct($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
+  public function __construct($id, $ten, $dia_chi, $so_dien_thoai, $nguoi_dung_id = 0)
   {
     $this->id = $id;
     $this->ten = $ten;
-    $this->loai_dich_vu = $loai_dich_vu;
     $this->dia_chi = $dia_chi;
     $this->so_dien_thoai = $so_dien_thoai;
+    $this->nguoi_dung_id = $nguoi_dung_id;
   }
 
-  static function getAll()
+  static function getAll($user_id = null)
   {
     $list = [];
     $db = DB::getInstance();
-    $result = $db->prepare('SELECT * FROM nha_cung_cap');
+    
+    if ($user_id !== null) {
+      $result = $db->prepare('SELECT * FROM nha_cung_cap WHERE nguoi_dung_id = ?');
+      $result->execute([$user_id]);
+    } else {
+      $result = $db->prepare('SELECT * FROM nha_cung_cap');
+      $result->execute();
+    }
+    
     $result->setFetchMode(PDO::FETCH_ASSOC);
-    $result->execute();
     foreach ($result->fetchAll() as $item) {
       $list[] = new NhaCungCap(
         $item['id'],
         $item['ten'],
-        $item['loai_dich_vu'],
         $item['dia_chi'],
-        $item['so_dien_thoai']
+        $item['so_dien_thoai'],
+        $item['nguoi_dung_id']
       );
     }
-
     return $list;
   }
 
-  public static function getItem($id)
+  public static function getItem($id, $user_id = null)
   {
     $db = DB::getInstance();
-    $stmt = $db->prepare('SELECT * FROM nha_cung_cap WHERE id = ?');
-    $stmt->execute([$id]);
+    $sql = 'SELECT * FROM nha_cung_cap WHERE id = ?';
+    $params = [$id];
+    
+    if ($user_id !== null) {
+      $sql .= ' AND nguoi_dung_id = ?';
+      $params[] = $user_id;
+    }
+    
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($item) {
       return new NhaCungCap(
         $item['id'],
         $item['ten'],
-        $item['loai_dich_vu'],
         $item['dia_chi'],
-        $item['so_dien_thoai']
+        $item['so_dien_thoai'],
+        $item['nguoi_dung_id']
       );
     }
     return null;
   }
 
-  public static function update($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
+  public static function update($id, $ten, $dia_chi, $so_dien_thoai)
   {
     $db = DB::getInstance();
     $sql = "UPDATE nha_cung_cap 
-            SET ten = ?, loai_dich_vu = ?, dia_chi = ?, so_dien_thoai = ? 
+            SET ten = ?, dia_chi = ?, so_dien_thoai = ? 
             WHERE id = ?";
 
     $stmt = $db->prepare($sql);
-
-    return $stmt->execute([
-      $ten,
-      $loai_dich_vu,
-      $dia_chi,
-      $so_dien_thoai,
-      $id
-    ]);
+    return $stmt->execute([$ten, $dia_chi, $so_dien_thoai, $id]);
   }
 
-  public static function delete($id)
+  public static function delete($id, $user_id = null)
   {
     $db = DB::getInstance();
     $sql = "DELETE FROM nha_cung_cap WHERE id = ?";
-    $stmt = $db->prepare($sql);
+    $params = [$id];
     
-
-    return $stmt->execute([$id]);
+    if ($user_id !== null) {
+      $sql .= " AND nguoi_dung_id = ?";
+      $params[] = $user_id;
+    }
+    
+    $stmt = $db->prepare($sql);
+    return $stmt->execute($params);
   }
 
-  public static function add($ten, $loai_dich_vu, $dia_chi, $so_dien_thoai)
+  public static function add($ten, $dia_chi, $so_dien_thoai, $nguoi_dung_id = 0)
   {
     $db = DB::getInstance();
-    $sql = "INSERT INTO nha_cung_cap (ten, loai_dich_vu, dia_chi, so_dien_thoai) 
+    $sql = "INSERT INTO nha_cung_cap (ten, dia_chi, so_dien_thoai, nguoi_dung_id) 
             VALUES (?, ?, ?, ?)";
     $stmt = $db->prepare($sql);
-    return $stmt->execute([
-      $ten,
-      $loai_dich_vu,
-      $dia_chi,
-      $so_dien_thoai
-    ]);
+    return $stmt->execute([$ten, $dia_chi, $so_dien_thoai, $nguoi_dung_id]);
   }
 }

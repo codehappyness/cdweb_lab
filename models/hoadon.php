@@ -3,20 +3,24 @@ class Hoadon
 {
   public $id;
   public $nha_cung_cap_id;
+  public $dich_vu_id;
+  public $nguoi_dung_id;
   public $loai_hoa_don;
   public $ky_cuoc;
   public $so_tien_can_dong;
-  public $chi_so_tieu_thu; // Bổ sung để lưu số kWh điện, số khối nước...
+  public $chi_so_tieu_thu;
   public $ngay_han_chot;
   public $trang_thai;
   public $ghi_chu_nen_tang;
   public $ngay_tao;
   public $ngay_cap_nhat;
 
-  public function __construct($id, $nha_cung_cap_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai, $ghi_chu_nen_tang, $ngay_tao, $ngay_cap_nhat)
+  public function __construct($id, $nha_cung_cap_id, $dich_vu_id, $nguoi_dung_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai, $ghi_chu_nen_tang, $ngay_tao, $ngay_cap_nhat)
   {
     $this->id = $id;
     $this->nha_cung_cap_id = $nha_cung_cap_id;
+    $this->dich_vu_id = $dich_vu_id;
+    $this->nguoi_dung_id = $nguoi_dung_id;
     $this->loai_hoa_don = $loai_hoa_don;
     $this->ky_cuoc = $ky_cuoc;
     $this->so_tien_can_dong = $so_tien_can_dong;
@@ -28,7 +32,7 @@ class Hoadon
     $this->ngay_cap_nhat = $ngay_cap_nhat;
   }
 
-  static function getAll($tu_ngay = null, $den_ngay = null, $nha_cung_cap_id = null)
+  static function getAll($tu_ngay = null, $den_ngay = null, $nha_cung_cap_id = null, $nguoi_dung_id = null)
   {
     $list = [];
     $db = DB::getInstance();
@@ -51,6 +55,11 @@ class Hoadon
         $params[] = $nha_cung_cap_id;
     }
 
+    if (!empty($nguoi_dung_id)) {
+        $sql .= ' AND nguoi_dung_id = ?';
+        $params[] = $nguoi_dung_id;
+    }
+
     $sql .= ' ORDER BY ngay_tao DESC';
     
     $stmt = $db->prepare($sql);
@@ -61,6 +70,8 @@ class Hoadon
       $list[] = new Hoadon(
         $item['id'],
         $item['nha_cung_cap_id'],
+        $item['dich_vu_id'],
+        $item['nguoi_dung_id'],
         $item['loai_hoa_don'],
         $item['ky_cuoc'],
         $item['so_tien_can_dong'],
@@ -76,17 +87,28 @@ class Hoadon
     return $list;
   }
 
-  public static function getItem($id)
+  public static function getItem($id, $nguoi_dung_id = null)
   {
     $db = DB::getInstance();
-    $stmt = $db->prepare('SELECT * FROM hoa_don WHERE id = ?');
-    $stmt->execute([$id]);
+    
+    $sql = 'SELECT * FROM hoa_don WHERE id = ?';
+    $params = [$id];
+    
+    if (!empty($nguoi_dung_id)) {
+      $sql .= ' AND nguoi_dung_id = ?';
+      $params[] = $nguoi_dung_id;
+    }
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($item) {
       return new Hoadon(
         $item['id'],
         $item['nha_cung_cap_id'],
+        $item['dich_vu_id'],
+        $item['nguoi_dung_id'],
         $item['loai_hoa_don'],
         $item['ky_cuoc'],
         $item['so_tien_can_dong'],
@@ -101,18 +123,18 @@ class Hoadon
     return null;
   }
 
-  // Hàm cập nhật (bao gồm cập nhật thanh toán và ghi chú giao dịch)
-  public static function update($id, $nha_cung_cap_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai, $ghi_chu_nen_tang)
+  public static function update($id, $nha_cung_cap_id, $dich_vu_id, $nguoi_dung_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai, $ghi_chu_nen_tang)
   {
     $db = DB::getInstance();
     $sql = "UPDATE hoa_don 
-                SET nha_cung_cap_id = ?, loai_hoa_don = ?, ky_cuoc = ?, so_tien_can_dong = ?, chi_so_tieu_thu = ?, ngay_han_chot = ?, trang_thai = ?, ghi_chu_nen_tang = ?, ngay_cap_nhat = NOW() 
-                WHERE id = ?";
+                SET nha_cung_cap_id = ?, dich_vu_id = ?, loai_hoa_don = ?, ky_cuoc = ?, so_tien_can_dong = ?, chi_so_tieu_thu = ?, ngay_han_chot = ?, trang_thai = ?, ghi_chu_nen_tang = ?, ngay_cap_nhat = NOW() 
+                WHERE id = ? AND nguoi_dung_id = ?";
 
     $stmt = $db->prepare($sql);
 
     return $stmt->execute([
       $nha_cung_cap_id,
+      $dich_vu_id,
       $loai_hoa_don,
       $ky_cuoc,
       $so_tien_can_dong,
@@ -120,29 +142,37 @@ class Hoadon
       $ngay_han_chot,
       $trang_thai,
       $ghi_chu_nen_tang,
-      $id
+      $id,
+      $nguoi_dung_id
     ]);
   }
 
-  public static function delete($id)
+  public static function delete($id, $nguoi_dung_id = null)
   {
     $db = DB::getInstance();
     $sql = "DELETE FROM hoa_don WHERE id = ?";
-    $stmt = $db->prepare($sql);
+    $params = [$id];
+    
+    if (!empty($nguoi_dung_id)) {
+      $sql .= " AND nguoi_dung_id = ?";
+      $params[] = $nguoi_dung_id;
+    }
 
-    return $stmt->execute([$id]);
+    $stmt = $db->prepare($sql);
+    return $stmt->execute($params);
   }
 
-  // Hàm thêm hóa đơn mới (tự động lấy ngày hiện tại cho ngay_tao và ngay_cap_nhat)
-  public static function add($nha_cung_cap_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai)
+  public static function add($nha_cung_cap_id, $dich_vu_id, $nguoi_dung_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai)
   {
     $db = DB::getInstance();
-    $sql = "INSERT INTO hoa_don (nha_cung_cap_id, loai_hoa_don, ky_cuoc, so_tien_can_dong, chi_so_tieu_thu, ngay_han_chot, trang_thai, ngay_tao, ngay_cap_nhat) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    $sql = "INSERT INTO hoa_don (nha_cung_cap_id, dich_vu_id, nguoi_dung_id, loai_hoa_don, ky_cuoc, so_tien_can_dong, chi_so_tieu_thu, ngay_han_chot, trang_thai, ngay_tao, ngay_cap_nhat) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $db->prepare($sql);
     return $stmt->execute([
       $nha_cung_cap_id,
+      $dich_vu_id,
+      $nguoi_dung_id,
       $loai_hoa_don,
       $ky_cuoc,
       $so_tien_can_dong,
@@ -151,38 +181,49 @@ class Hoadon
       $trang_thai
     ]);
   }
-  /**
-   * Đếm tổng số hóa đơn dựa theo ID nhà cung cấp
-   */
+  
   public static function countByNhaCungCapId($id)
   {
     $db = DB::getInstance();
     $sql = "SELECT COUNT(*) FROM hoa_don WHERE nha_cung_cap_id = ?";
     $stmt = $db->prepare($sql);
-
     $stmt->execute([$id]);
-
-    // fetchColumn() trả về giá trị của cột đầu tiên (chính là kết quả của COUNT)
     return $stmt->fetchColumn();
   }
 
-  // Lấy các hóa đơn sắp đến hạn (còn <= 7 ngày) và chưa thanh toán
-  public static function getCanhBaoDenHan()
+  public static function countByDichVuId($id)
+  {
+    $db = DB::getInstance();
+    $sql = "SELECT COUNT(*) FROM hoa_don WHERE dich_vu_id = ?";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$id]);
+    return $stmt->fetchColumn();
+  }
+
+  public static function getCanhBaoDenHan($nguoi_dung_id = null)
   {
     $list = [];
     $db = DB::getInstance();
     $sql = "SELECT * FROM hoa_don 
             WHERE trang_thai = 0 
             AND ngay_han_chot >= NOW() 
-            AND ngay_han_chot <= DATE_ADD(NOW(), INTERVAL 7 DAY)
-            ORDER BY ngay_han_chot ASC";
+            AND ngay_han_chot <= DATE_ADD(NOW(), INTERVAL 7 DAY)";
+    $params = [];
+    if (!empty($nguoi_dung_id)) {
+      $sql .= " AND nguoi_dung_id = ?";
+      $params[] = $nguoi_dung_id;
+    }
+    $sql .= " ORDER BY ngay_han_chot ASC";
+    
     $result = $db->prepare($sql);
-    $result->execute();
+    $result->execute($params);
 
     foreach ($result->fetchAll(PDO::FETCH_ASSOC) as $item) {
       $list[] = new Hoadon(
         $item['id'],
         $item['nha_cung_cap_id'],
+        $item['dich_vu_id'],
+        $item['nguoi_dung_id'],
         $item['loai_hoa_don'],
         $item['ky_cuoc'],
         $item['so_tien_can_dong'],
@@ -197,17 +238,22 @@ class Hoadon
     return $list;
   }
 
-  // Thống kê theo tháng
-  public static function getThongKeTheoThang()
+  public static function getThongKeTheoThang($nguoi_dung_id = null)
   {
     $db = DB::getInstance();
     $sql = "SELECT DATE_FORMAT(ngay_tao, '%m/%Y') as thang, 
                    SUM(so_tien_can_dong) as tong_tien 
             FROM hoa_don 
-            GROUP BY thang
-            ORDER BY MIN(ngay_tao) ASC";
+            WHERE 1=1";
+    $params = [];
+    if (!empty($nguoi_dung_id)) {
+      $sql .= " AND nguoi_dung_id = ?";
+      $params[] = $nguoi_dung_id;
+    }
+    $sql .= " GROUP BY thang ORDER BY MIN(ngay_tao) ASC";
+            
     $result = $db->prepare($sql);
-    $result->execute();
+    $result->execute($params);
     return $result->fetchAll(PDO::FETCH_ASSOC);
   }
 }

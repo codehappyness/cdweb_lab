@@ -137,26 +137,39 @@ classDiagram
         +String MatKhau
         +String HoTen
         +String Email
+        +Int VaiTro
         +dangNhap()
         +dangXuat()
-        +capNhatThongTin()
+        +dangKy()
+        +quanLyTaiKhoan()
     }
     
     class NhaCungCap {
         +String MaNCC
         +String MaND
         +String TenNCC
-        +String LoaiDichVu
-        +String TrangThai
+        +String DiaChi
+        +String SoDienThoai
         +themNCC()
         +suaNCC()
         +xoaNCC()
+    }
+
+    class DichVu {
+        +String MaDV
+        +String MaNCC
+        +String MaND
+        +String TenDichVu
+        +String MoTa
+        +themDV()
+        +suaDV()
+        +xoaDV()
     }
     
     class HoaDon {
         +String MaHD
         +String MaNCC
-        +String MaND
+        +String MaDV
         +String KyCuoc
         +Date NgayHanChot
         +Float SoTien
@@ -176,8 +189,11 @@ classDiagram
     }
 
     NguoiDung "1" -- "0..*" NhaCungCap : Quản lý
+    NguoiDung "1" -- "0..*" DichVu : Quản lý
     NguoiDung "1" -- "0..*" HoaDon : Quản lý
-    NhaCungCap "1" -- "0..*" HoaDon : Cung cấp
+    NhaCungCap "1" -- "0..*" DichVu : Cung cấp
+    NhaCungCap "1" -- "0..*" HoaDon : Xuất
+    DichVu "1" -- "0..*" HoaDon : Thuộc
     HoaDon "1" -- "0..1" ChungTu : Đính kèm
 
 ```
@@ -201,14 +217,13 @@ stateDiagram-v2
 
 Hệ thống sử dụng các bảng chính được liên kết với nhau qua khóa ngoại:
 
-* **NguoiDung:** MaND (PK), TenDangNhap, MatKhau, HoTen, Email.
+* **NguoiDung:** MaND (PK), TenDangNhap, MatKhau, HoTen, Email, VaiTro (0: Người dùng, 1: Quản trị viên).
 
+* **NhaCungCap:** MaNCC (PK), MaND (FK), TenNCC, DiaChi, SoDienThoai.
 
-* **NhaCungCap:** MaNCC (PK), MaND (FK), TenNCC, LoaiDichVu, TrangThai.
+* **DichVu:** MaDV (PK), MaNCC (FK), MaND (FK), TenDichVu, MoTa.
 
-
-* **HoaDon:** MaHD (PK), MaNCC (FK), MaND (FK), KyCuoc, NgayHanChot, SoTien, TrangThaiThanhToan.
-
+* **HoaDon:** MaHD (PK), MaNCC (FK), MaDV (FK), KyCuoc, NgayHanChot, SoTien, TrangThaiThanhToan.
 
 * **ChungTu:** Id (PK), MaHD (FK), LoaiChungTu, NgayTaiLen, DuongDanAnh.
 
@@ -229,7 +244,42 @@ Hệ thống sử dụng các bảng chính được liên kết với nhau qua 
 
 * **Ngôn ngữ/Công nghệ ứng dụng:** Lập trình PHP Hướng đối tượng (OOP), Hệ quản trị CSDL MySQL (PDO), HTML/CSS/JavaScript (Bootstrap).
 
+#### 4. Cấu trúc chức năng Đăng nhập & Quản lý Người dùng (Authentication & User Management)
 
+Hệ thống cung cấp cơ chế bảo mật và phân quyền rõ ràng với các điểm nổi bật sau:
+
+* **Entry point & Router (`index.php`, `router.php`):** 
+  * Khai báo `session_start()` để khởi tạo phiên làm việc (Session).
+  * Chặn (middleware) tại `index.php`: Yêu cầu phải có `$_SESSION['user']`, nếu chưa sẽ bị đẩy về trang Login.
+  * Phân luồng: Admin có `vai_tro = 1` sẽ thấy thêm menu và tính năng "Quản lý Người dùng".
+
+* **Model (`models/nguoidung.php`):** Lớp `NguoiDung` bổ sung trường `vai_tro` (0 hoặc 1). Xử lý các tác vụ như xác thực đăng nhập (`kiemTraDangNhap`), kiểm tra tồn tại username (`checkTonTai`), thêm người dùng (`add`) và toàn bộ CRUD cho Admin.
+
+* **Controller Đăng nhập & Đăng ký (`controllers/auth_controller.php`):**
+  * Xử lý Đăng nhập/Đăng xuất (`login`, `loginPost`, `logout`).
+  * Xử lý Đăng ký công khai (`register`, `registerPost`): Cho phép khách tạo tài khoản mới (Mặc định `vai_tro = 0`).
+
+* **Controller Quản lý Quản trị viên (`controllers/nguoidung_controller.php`):**
+  * Giới hạn quyền truy cập: Chỉ Admin (`vai_tro == 1`) mới vào được.
+  * Các hàm `index`, `add`, `store`, `edit`, `update`, `delete`: Quản lý danh sách người dùng, cấp quyền, đổi mật khẩu.
+
+* **View (Giao diện):**
+  * `login.php` và `register.php`: Các trang công khai sử dụng thiết kế chuyên biệt, đẹp mắt.
+  * Thư mục `views/nguoidung/`: Giao diện riêng cho Admin (Danh sách bảng, Form chọn vai trò).
+  * `sidebar.php`: Render menu thông minh, chỉ xuất hiện "Quản lý Người dùng" khi `vai_tro == 1`.
+
+#### 5. Cơ chế phân tách Nhà cung cấp và Dịch vụ (Provider - Service Relation)
+
+Thay vì gộp chung một cục, hệ thống đã chuẩn hóa CSDL theo mô hình quan hệ 1-N (1 Nhà cung cấp có thể có nhiều Dịch vụ):
+* Bảng `dich_vu` và `nha_cung_cap` được kết nối thông qua `nha_cung_cap_id`.
+* Khi tạo Hóa đơn (`views/hoadon/edit.php`), hệ thống ứng dụng JavaScript Dynamic Dropdown: Chọn Nhà cung cấp A thì Dropdown "Dịch vụ" chỉ xổ ra các dịch vụ thuộc nhà cung cấp A.
+* Điều này giúp hệ thống linh hoạt hơn, phù hợp với các đơn vị như VNPT (vừa cung cấp Internet, vừa cung cấp Truyền hình cáp).
+
+#### 6. Cơ chế cách ly dữ liệu cá nhân (Data Isolation)
+
+Hệ thống được thiết kế theo hướng đa người dùng (Multi-tenant) để đảm bảo tính riêng tư của dữ liệu tài chính:
+* **Mỗi Hóa đơn thuộc về 1 Người dùng duy nhất:** Khi người dùng nhấn lưu một hóa đơn mới, hệ thống sẽ tự động gán `ma_nd` của tài khoản đang đăng nhập (lấy từ `$_SESSION['user']['ma_nd']`) vào trường `nguoi_dung_id` của bảng `hoa_don`.
+* **Phân tách luồng xem:** Tất cả các tính năng bao gồm Trang danh sách Hóa đơn, Thống kê biểu đồ, và Cảnh báo hạn chót đều được cài đặt bộ lọc (WHERE `nguoi_dung_id` = ...). Do đó, người dùng A sẽ không bao giờ nhìn thấy hóa đơn của người dùng B, đảm bảo tính cá nhân hóa 100%.
 
 ---
 

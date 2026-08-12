@@ -11,7 +11,8 @@ class ThongkeController extends BaseController
 
   public function index()
   {
-    $thongkeThang = Hoadon::getThongKeTheoThang();
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+    $thongkeThang = Hoadon::getThongKeTheoThang($nguoi_dung_id);
     
     // Chuẩn bị data cho Chart.js
     $labels = [];

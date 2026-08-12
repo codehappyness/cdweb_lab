@@ -17,14 +17,6 @@
                 <td><?= htmlspecialchars($item->ten) ?></td>
               </tr>
               <tr>
-                <th>Loại dịch vụ</th>
-                <td>
-                  <span class="badge bg-info text-dark">
-                    <?= htmlspecialchars($item->loai_dich_vu) ?>
-                  </span>
-                </td>
-              </tr>
-              <tr>
                 <th>Địa chỉ</th>
                 <td><?= htmlspecialchars($item->dia_chi) ?></td>
               </tr>

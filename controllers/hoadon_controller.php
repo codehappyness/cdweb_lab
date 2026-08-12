@@ -2,6 +2,7 @@
 require_once('controllers/base_controller.php');
 require_once('models/hoadon.php');
 require_once('models/nhacungcap.php');
+require_once('models/dichvu.php');
 require_once('models/chungtu.php');
 
 class HoadonController extends BaseController
@@ -17,9 +18,11 @@ class HoadonController extends BaseController
     $den_ngay = $_GET['den_ngay'] ?? null;
     $nha_cung_cap_id = $_GET['nha_cung_cap_id'] ?? null;
 
-    $hoadons = Hoadon::getAll($tu_ngay, $den_ngay, $nha_cung_cap_id);
-    $canhbaos = Hoadon::getCanhBaoDenHan();
-    $nhaCungCaps = NhaCungCap::getAll();
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+
+    $hoadons = Hoadon::getAll($tu_ngay, $den_ngay, $nha_cung_cap_id, $nguoi_dung_id);
+    $canhbaos = Hoadon::getCanhBaoDenHan($nguoi_dung_id);
+    $nhaCungCaps = NhaCungCap::getAll($nguoi_dung_id);
 
     $data = array(
       'list' => $hoadons, 
@@ -34,11 +37,14 @@ class HoadonController extends BaseController
 
   public function add()
   {
-    $nhaCungCaps = NhaCungCap::getAll();
-    $hoaDon = new Hoadon(0, 0, 0, '', 0, '', '', 0, '', '', '');
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+    $nhaCungCaps = NhaCungCap::getAll($nguoi_dung_id);
+    $dichVus = DichVu::getAll($nguoi_dung_id);
+    $hoaDon = new Hoadon(0, 0, 0, 0, 0, '', 0, '', '', 0, '', '', '');
     $this->render('edit', [
       'item' => $hoaDon,
-      'nhaCungCaps' => $nhaCungCaps
+      'nhaCungCaps' => $nhaCungCaps,
+      'dichVus' => $dichVus
     ]);
   }
 
@@ -49,12 +55,15 @@ class HoadonController extends BaseController
       back_with('error', 'Mã không có giá trị');
       return;
     }
-    $hoaDon = Hoadon::getItem($id);
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+    $hoaDon = Hoadon::getItem($id, $nguoi_dung_id);
     if ($hoaDon) {
-      $nhaCungCaps = NhaCungCap::getAll();
+      $nhaCungCaps = NhaCungCap::getAll($nguoi_dung_id);
+      $dichVus = DichVu::getAll($nguoi_dung_id);
       $this->render('edit', [
         'item' => $hoaDon,
-        'nhaCungCaps' => $nhaCungCaps
+        'nhaCungCaps' => $nhaCungCaps,
+        'dichVus' => $dichVus
       ]);
     } else {
       $url_danh_sach = route('hoadon', 'index');
@@ -70,6 +79,7 @@ class HoadonController extends BaseController
 
     $id = $_POST['id'] ?? null;
     $nha_cung_cap_id = $_POST['nha_cung_cap_id'] ?? 0;
+    $dich_vu_id = $_POST['dich_vu_id'] ?? 0;
     $loai_hoa_don = $_POST['loai_hoa_don'] ?? 0;
     $ky_cuoc = $_POST['ky_cuoc'] ?? '';
     $so_tien_can_dong = $_POST['so_tien_can_dong'] ?? 0;
@@ -78,15 +88,17 @@ class HoadonController extends BaseController
     $trang_thai = $_POST['trang_thai'] ?? 0;
     $ghi_chu_nen_tang = $_POST['ghi_chu_nen_tang'] ?? '';
 
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+
     if (empty($id)) {
-      $ket_qua = Hoadon::add($nha_cung_cap_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai);
+      $ket_qua = Hoadon::add($nha_cung_cap_id, $dich_vu_id, $nguoi_dung_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai);
       $status_success = 'Thêm mới hóa đơn thành công!';
     } else {
-      $hoa_don_ton_tai = Hoadon::getItem($id);
+      $hoa_don_ton_tai = Hoadon::getItem($id, $nguoi_dung_id);
       if (!$hoa_don_ton_tai) {
         back_with('error', 'Không tìm thấy hóa đơn này!');
       }
-      $ket_qua = Hoadon::update($id, $nha_cung_cap_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai, $ghi_chu_nen_tang);
+      $ket_qua = Hoadon::update($id, $nha_cung_cap_id, $dich_vu_id, $nguoi_dung_id, $loai_hoa_don, $ky_cuoc, $so_tien_can_dong, $chi_so_tieu_thu, $ngay_han_chot, $trang_thai, $ghi_chu_nen_tang);
       $status_success = 'Cập nhật thành công!';
     }
 
@@ -105,7 +117,8 @@ class HoadonController extends BaseController
       back_with('error', 'Mã không có giá trị');
       return;
     }
-    $hoaDon = Hoadon::getItem($id);
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+    $hoaDon = Hoadon::getItem($id, $nguoi_dung_id);
     if ($hoaDon) {
       $this->render('pay', [
         'item' => $hoaDon
@@ -126,7 +139,8 @@ class HoadonController extends BaseController
     $ghi_chu_nen_tang = $_POST['ghi_chu_nen_tang'] ?? '';
     $loai_chung_tu = $_POST['loai_chung_tu'] ?? 'Hóa đơn';
 
-    $hoaDon = Hoadon::getItem($id);
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+    $hoaDon = Hoadon::getItem($id, $nguoi_dung_id);
     if (!$hoaDon) {
       back_with('error', 'Không tìm thấy hóa đơn này!');
     }
@@ -135,6 +149,8 @@ class HoadonController extends BaseController
     Hoadon::update(
         $hoaDon->id,
         $hoaDon->nha_cung_cap_id,
+        $hoaDon->dich_vu_id,
+        $hoaDon->nguoi_dung_id,
         $hoaDon->loai_hoa_don,
         $hoaDon->ky_cuoc,
         $hoaDon->so_tien_can_dong,
@@ -171,7 +187,8 @@ class HoadonController extends BaseController
       echo "Lỗi: Không có ID để xóa!";
       return;
     }
-    $ket_qua = Hoadon::delete($id);
+    $nguoi_dung_id = $_SESSION['user']['ma_nd'] ?? null;
+    $ket_qua = Hoadon::delete($id, $nguoi_dung_id);
     if ($ket_qua) {
       header("Location: index.php?controller=hoadon&msg=deleted");
       exit();

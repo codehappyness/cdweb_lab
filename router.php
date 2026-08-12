@@ -2,7 +2,10 @@
 
 $controllers = array(
   'home' => ['index', 'error'],
+  'auth' => ['login', 'loginPost', 'logout', 'register', 'registerPost'],
+  'nguoidung' => ['index', 'edit', 'update', 'delete', 'add', 'store'],
   'dmdichvu' => ['index', 'error'],
+  'dichvu' => ['index', 'error', 'detail', 'edit', 'delete', 'add', 'store'],
   'nhacungcap' => ['index', 'error', 'detail', 'edit', 'delete', 'add', 'store'],
   'hoadon' => ['index', 'add', 'store', 'edit', 'update', 'delete', 'pay', 'store_pay'],
   'thongke' => ['index'],

@@ -29,7 +29,19 @@
               <option value="">-- Chọn nhà cung cấp --</option>
               <?php foreach ($nhaCungCaps as $ncc): ?>
                 <option value="<?= $ncc->id ?>" <?= ($item->nha_cung_cap_id == $ncc->id) ? 'selected' : '' ?>>
-                  <?= htmlspecialchars($ncc->ten) ?> (<?= htmlspecialchars($ncc->loai_dich_vu) ?>)
+                  <?= htmlspecialchars($ncc->ten) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Dịch vụ <span class="text-danger">*</span></label>
+            <select name="dich_vu_id" class="form-control" required>
+              <option value="">-- Chọn dịch vụ --</option>
+              <?php foreach ($dichVus as $dv): ?>
+                <option value="<?= $dv->id ?>" data-ncc-id="<?= $dv->nha_cung_cap_id ?>" <?= ($item->dich_vu_id == $dv->id) ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($dv->ten_dich_vu) ?> (<?= htmlspecialchars($dv->ten_nha_cung_cap) ?>)
                 </option>
               <?php endforeach; ?>
             </select>
@@ -74,3 +86,42 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const nhaCungCapSelect = document.querySelector('select[name="nha_cung_cap_id"]');
+    const dichVuSelect = document.querySelector('select[name="dich_vu_id"]');
+    
+    // Store original options
+    const allDichVuOptions = Array.from(dichVuSelect.options).filter(opt => opt.value !== "");
+    
+    function filterDichVu() {
+        const selectedNccId = nhaCungCapSelect.value;
+        const currentDichVuId = dichVuSelect.value;
+        
+        // Reset dich vu options
+        dichVuSelect.innerHTML = '<option value="">-- Chọn dịch vụ --</option>';
+        
+        let hasSelected = false;
+        
+        allDichVuOptions.forEach(opt => {
+            if (opt.getAttribute('data-ncc-id') === selectedNccId) {
+                const newOpt = opt.cloneNode(true);
+                dichVuSelect.appendChild(newOpt);
+                if (newOpt.value === currentDichVuId) {
+                    newOpt.selected = true;
+                    hasSelected = true;
+                }
+            }
+        });
+        
+        if (!hasSelected) {
+            dichVuSelect.value = "";
+        }
+    }
+
+    nhaCungCapSelect.addEventListener('change', filterDichVu);
+    // Trigger on load to filter initial state
+    filterDichVu();
+});
+</script>

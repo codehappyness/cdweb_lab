@@ -33,9 +33,23 @@
 
   <li class="nav-item">
     <a class="nav-link" href="/?controller=nhacungcap">
-      <i class="fas fa-fw fa-chart-area"></i>
+      <i class="fas fa-fw fa-building"></i>
       <span>Nhà cung cấp</span></a>
   </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="/?controller=dichvu">
+      <i class="fas fa-fw fa-concierge-bell"></i>
+      <span>Dịch vụ</span></a>
+  </li>
+
+  <?php if (isset($_SESSION['user']) && $_SESSION['user']['vai_tro'] == 1): ?>
+  <li class="nav-item">
+    <a class="nav-link" href="index.php?controller=nguoidung">
+      <i class="fas fa-fw fa-users"></i>
+      <span>Quản lý Người dùng</span></a>
+  </li>
+  <?php endif; ?>
 
   <!-- Divider -->
   <hr class="sidebar-divider d-none d-md-block">

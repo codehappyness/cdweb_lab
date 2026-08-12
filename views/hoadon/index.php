@@ -66,6 +66,7 @@
           <tr>
             <th>ID</th>
             <th>Nhà cung cấp</th>
+            <th>Dịch vụ</th>
             <th>Kỳ cước</th>
             <th class="text-right">Số tiền</th>
             <th>Hạn chót</th>
@@ -82,6 +83,12 @@
                   <?php 
                     $ncc = NhaCungCap::getItem($item->nha_cung_cap_id);
                     echo $ncc ? htmlspecialchars($ncc->ten) : 'Không xác định';
+                  ?>
+                </td>
+                <td>
+                  <?php 
+                    $dv = DichVu::getItem($item->dich_vu_id);
+                    echo $dv ? htmlspecialchars($dv->ten_dich_vu) : 'Không xác định';
                   ?>
                 </td>
                 <td><?= htmlspecialchars($item->ky_cuoc) ?></td>
@@ -105,7 +112,7 @@
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="7" class="text-center">Chưa có dữ liệu</td>
+              <td colspan="8" class="text-center">Chưa có dữ liệu</td>
             </tr>
           <?php endif; ?>
         </tbody>
@@ -119,7 +126,7 @@
         ?>
         <tfoot>
           <tr class="bg-light">
-            <th colspan="3" class="text-right font-weight-bold">Tổng cộng:</th>
+            <th colspan="4" class="text-right font-weight-bold">Tổng cộng:</th>
             <th class="text-right font-weight-bold text-danger"><?= number_format($tongTien) ?> VND</th>
             <th colspan="3"></th>
           </tr>

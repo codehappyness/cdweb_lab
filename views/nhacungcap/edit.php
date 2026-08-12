@@ -31,11 +31,7 @@
               <?= error('ten') ?>
             </div>
 
-            <div class="form-group mb-3">
-              <label>Loại dịch vụ</label>
-              <input type="text" name="loai_dich_vu" class="form-control <?= has_error('loai_dich_vu') ?>" value="<?= old('loai_dich_vu', $item->loai_dich_vu) ?>">
-              <?= error('loai_dich_vu') ?>
-            </div>
+
 
             <div class="form-group mb-3">
               <label>Địa chỉ</label>

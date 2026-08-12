@@ -11,7 +11,8 @@ class NhacungcapController extends BaseController
   }
   public function index()
   {
-    $nhacungcaps = NhaCungCap::getAll();
+    $user_id = isset($_SESSION['user']['ma_nd']) ? $_SESSION['user']['ma_nd'] : null;
+    $nhacungcaps = NhaCungCap::getAll($user_id);
     $data = array('list' => $nhacungcaps);
     $this->render('index', $data);
   }
@@ -25,7 +26,8 @@ class NhacungcapController extends BaseController
       return;
     }
 
-    $nhaCungCap = NhaCungCap::getItem($id);
+    $user_id = isset($_SESSION['user']['ma_nd']) ? $_SESSION['user']['ma_nd'] : null;
+    $nhaCungCap = NhaCungCap::getItem($id, $user_id);
 
     if ($nhaCungCap) {
       $this->render('detail', [
@@ -38,7 +40,7 @@ class NhacungcapController extends BaseController
 
   public function add()
   {
-    $nhaCungCap = new NhaCungCap(0, '', '', '', '');
+    $nhaCungCap = new NhaCungCap(0, '', '', '');
 
     $this->render('edit', [
       'item' => $nhaCungCap
@@ -54,7 +56,8 @@ class NhacungcapController extends BaseController
       return;
     }
 
-    $nhaCungCap = NhaCungCap::getItem($id);
+    $user_id = isset($_SESSION['user']['ma_nd']) ? $_SESSION['user']['ma_nd'] : null;
+    $nhaCungCap = NhaCungCap::getItem($id, $user_id);
 
     if ($nhaCungCap) {
       $this->render('edit', [
@@ -74,9 +77,9 @@ class NhacungcapController extends BaseController
 
     $id = $_POST['id'] ?? null;
     $ten = trim($_POST['ten'] ?? '');
-    $loai_dich_vu = trim($_POST['loai_dich_vu'] ?? '');
     $dia_chi = trim($_POST['dia_chi'] ?? '');
     $so_dien_thoai = trim($_POST['so_dien_thoai'] ?? '');
+    $nguoi_dung_id = isset($_SESSION['user']['ma_nd']) ? $_SESSION['user']['ma_nd'] : 0;
 
     $errors = [];
 
@@ -97,14 +100,14 @@ class NhacungcapController extends BaseController
     }
 
     if (empty($id)) {
-      $ket_qua = NhaCungCap::add($ten, $loai_dich_vu, $dia_chi, $so_dien_thoai);
+      $ket_qua = NhaCungCap::add($ten, $dia_chi, $so_dien_thoai, $nguoi_dung_id);
       $status_success = 'Thêm mới nhà cung cấp thành công!';
     } else {
-      $nha_cung_cap_ton_tai = NhaCungCap::getItem($id);
+      $nha_cung_cap_ton_tai = NhaCungCap::getItem($id, $nguoi_dung_id);
       if (!$nha_cung_cap_ton_tai) {
         back_with('error', 'Không tìm thấy nhà cung cấp này!');
       }
-      $ket_qua = NhaCungCap::update($id, $ten, $loai_dich_vu, $dia_chi, $so_dien_thoai);
+      $ket_qua = NhaCungCap::update($id, $ten, $dia_chi, $so_dien_thoai);
       $status_success = 'Cập nhật thành công!';
     }
 
@@ -125,7 +128,8 @@ class NhacungcapController extends BaseController
       return;
     }
 
-    $nhacungcap = NhaCungCap::getItem($id);
+    $user_id = isset($_SESSION['user']['ma_nd']) ? $_SESSION['user']['ma_nd'] : null;
+    $nhacungcap = NhaCungCap::getItem($id, $user_id);
     if(!$nhacungcap)
     {
       $url_danh_sach = route('nhacungcap', 'index');
@@ -139,7 +143,7 @@ class NhacungcapController extends BaseController
       redirect_with($url_danh_sach, 'error', 'Bạn không thể xóa nhà cung cấp này');
     }
 
-    $ket_qua = NhaCungCap::delete($id);
+    $ket_qua = NhaCungCap::delete($id, $user_id);
 
     if ($ket_qua) {
       header("Location: index.php?controller=nhacungcap&msg=deleted");
