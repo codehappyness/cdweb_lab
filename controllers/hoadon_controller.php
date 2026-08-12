@@ -163,7 +163,7 @@ class HoadonController extends BaseController
     // Xử lý upload ảnh
     $duong_dan_anh = '';
     if (isset($_FILES['file_chung_tu']) && $_FILES['file_chung_tu']['error'] == 0) {
-      $upload_dir = 'assets/uploads/';
+      $upload_dir = 'resource/assets/uploads/';
       if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0777, true);
       }

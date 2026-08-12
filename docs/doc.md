@@ -363,7 +363,7 @@ Sau khi đã hoàn thiện bản thiết kế cơ sở dữ liệu và quy trìn
 * **Xây dựng tầng Dữ liệu - `models/`:** Tạo các lớp (Class) tương ứng với các thực thể trong CSDL (như `NguoiDungModel`, `HoaDonModel`, `NhaCungCapModel`). Lớp này chỉ chuyên chứa các câu truy vấn (Query) để Thêm, Xóa, Sửa, Lấy dữ liệu.
 * **Xây dựng tầng Hiển thị - `views/`:** Chuyển đổi các file HTML tĩnh ở bước 1 sang định dạng `.php`. Cắt nhỏ các phần dùng chung như `header.php`, `footer.php`, `sidebar.php` để tái sử dụng (require/include) nhằm tránh lặp lại mã nguồn.
 * **Xây dựng tầng Điều khiển - `controllers/`:** Tạo các bộ điều khiển (như `AuthController`, `HoaDonController`). Đây là cầu nối tiếp nhận dữ liệu từ Model, xử lý các logic tính toán (như kiểm tra hạn chót thanh toán) và đẩy biến dữ liệu ra View tương ứng để render lên trình duyệt.
-* **Khu vực tài nguyên tĩnh (`public/` hoặc `assets/`):** Thiết lập thư mục lưu trữ các file CSS tự định nghĩa, file JavaScript, hình ảnh tĩnh của hệ thống và tạo sẵn thư mục con `uploads/` có cấp quyền ghi (write permission) để chuẩn bị đón nhận các file chứng từ giao dịch do người dùng tải lên.
+* **Khu vực tài nguyên tĩnh (`public/` hoặc `resource/assets/`):** Thiết lập thư mục lưu trữ các file CSS tự định nghĩa, file JavaScript, hình ảnh tĩnh của hệ thống và tạo sẵn thư mục con `uploads/` có cấp quyền ghi (write permission) để chuẩn bị đón nhận các file chứng từ giao dịch do người dùng tải lên.
 
 **3. Thiết lập cơ chế định tuyến trung tâm (Routing)**
 

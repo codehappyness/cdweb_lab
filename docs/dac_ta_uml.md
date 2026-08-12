@@ -43,7 +43,7 @@ Dựa vào Sơ đồ Lớp (Class / ER Diagram), cơ sở dữ liệu được t
 ### 5. Thực thể `CHUNG_TU_DIEN_TU` (Chứng từ)
 * **Ý nghĩa:** Lưu trữ bằng chứng thanh toán bằng hình ảnh hoặc file tải lên.
 * **Các thuộc tính quan trọng:**
-  * `duong_dan_file`: Đường dẫn lưu hình ảnh trên server (`assets/uploads/...`).
+  * `duong_dan_file`: Đường dẫn lưu hình ảnh trên server (`resource/assets/uploads/...`).
   * `hoa_don_id` (FK): Khóa ngoại liên kết duy nhất (Unique) 1-1 tới hóa đơn đã thanh toán.
 
 ### 6. Mô tả các Mối kết hợp (Relationships)
@@ -67,7 +67,7 @@ Dựa vào Sơ đồ Lớp (Class / ER Diagram), cơ sở dữ liệu được t
      * Kiểm tra đuôi mở rộng (Extension) có phải là hình ảnh (jpg, jpeg, png).
      * Kiểm tra dung lượng (Size) không vượt quá 2MB.
      * Nếu lỗi: Trả về trạng thái từ chối, yêu cầu người dùng đổi file.
-  6. Nếu File hợp lệ, hệ thống sử dụng cơ chế Upload của PHP để chuyển tệp vật lý vào thư mục `/assets/uploads/`.
+  6. Nếu File hợp lệ, hệ thống sử dụng cơ chế Upload của PHP để chuyển tệp vật lý vào thư mục `/resource/assets/uploads/`.
   7. Hệ thống tự động mở Transaction (SQL), cập nhật cột `trang_thai = 1` ở bảng Hóa Đơn, đồng thời `INSERT` đường dẫn file vào bảng `chung_tu_dien_tu`.
   8. Kết thúc luồng hoạt động, hệ thống hiển thị thông báo "Thanh toán thành công" và loại bỏ hóa đơn khỏi danh sách nợ.
 

@@ -32,7 +32,7 @@ Mã nguồn được tổ chức theo chuẩn mô hình **Model - View - Control
 
 ```text
 /
-├── assets/                 # (Public) Chứa các tài nguyên tĩnh tĩnh của giao diện.
+├── resource/assets/                 # (Public) Chứa các tài nguyên tĩnh tĩnh của giao diện.
 │   ├── css/                # File CSS tùy chỉnh và SB Admin 2.
 │   ├── js/                 # File JavaScript xử lý logic Frontend và Biểu đồ.
 │   ├── uploads/            # Nơi lưu trữ chứng từ (hình ảnh biên lai) người dùng tải lên.
@@ -77,5 +77,5 @@ Mã nguồn được tổ chức theo chuẩn mô hình **Model - View - Control
 
 1. Import tệp cơ sở dữ liệu vào MySQL/MariaDB (Ví dụ: `database.sql` hoặc sử dụng cơ sở dữ liệu `qltaichinh` có sẵn).
 2. Kiểm tra lại thông tin kết nối CSDL trong file `connection.php` (Tên DB, Username, Password).
-3. Đảm bảo thư mục `assets/uploads/` có quyền ghi (Write Permission) để hỗ trợ tính năng Upload biên lai.
+3. Đảm bảo thư mục `resource/assets/uploads/` có quyền ghi (Write Permission) để hỗ trợ tính năng Upload biên lai.
 4. Chạy hệ thống trên Localhost (XAMPP/Laragon) hoặc máy chủ Apache/Nginx.

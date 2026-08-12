@@ -131,7 +131,7 @@ flowchart TD
     F --> G[Hệ thống kiểm tra định dạng và dung lượng]
     G --> H{Hợp lệ?}
     H -- Không --> I[Báo lỗi File không hợp lệ] --> F
-    H -- Có --> J[Lưu File vào thư mục `assets/uploads/`]
+    H -- Có --> J[Lưu File vào thư mục `resource/assets/uploads/`]
     J --> K[Ghi thông tin đường dẫn vào bảng `chung_tu_dien_tu`]
     K --> End
 ```

@@ -64,7 +64,7 @@ Tài liệu này cung cấp mô tả chi tiết (đặc tả) cho các Use Case 
   2. Hệ thống hiển thị màn hình Chi tiết Thanh toán.
   3. Người dùng chọn hình thức thanh toán (Nền tảng giao dịch) và tải lên 1 tệp hình ảnh (.jpg, .png) làm biên lai chứng từ.
   4. Người dùng bấm "Xác nhận thanh toán".
-  5. Hệ thống kiểm tra định dạng và dung lượng tệp. Nếu hợp lệ, hệ thống lưu tệp vào thư mục `assets/uploads/`.
+  5. Hệ thống kiểm tra định dạng và dung lượng tệp. Nếu hợp lệ, hệ thống lưu tệp vào thư mục `resource/assets/uploads/`.
   6. Hệ thống chuyển trạng thái Hóa đơn sang "Đã thanh toán" và ghi đường dẫn file vào bảng `chung_tu_dien_tu`.
 * **Luồng sự kiện rẽ nhánh (Alternate Flow):**
   * *Tệp không hợp lệ:* Nếu tệp tải lên vượt quá dung lượng hoặc sai định dạng, hệ thống từ chối và báo lỗi ngay trên giao diện.

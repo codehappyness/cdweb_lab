@@ -30,68 +30,6 @@ $title = 'Trang chủ - Quản lý Chi tiêu';
 </div>
 <?php endif; ?>
 
-<div class="row mb-4">
-  <!-- Thông tin người dùng -->
-  <div class="col-xl-4 col-md-6 mb-4">
-    <a href="?controller=profile&action=index" class="text-decoration-none">
-      <div class="card border-left-info shadow h-100 py-2">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Thông tin tài khoản</div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><?= htmlspecialchars($user_info['ho_ten'] ?? 'Chưa rõ') ?></div>
-              <div class="text-sm mt-2 text-gray-600">
-                  <small>Tên ĐN: <?= htmlspecialchars($user_info['ten_dang_nhap'] ?? '') ?></small><br>
-                  <small>Đăng nhập lần cuối: <?= !empty($user_info['lan_dang_nhap_cuoi']) ? date('d/m/Y H:i', strtotime($user_info['lan_dang_nhap_cuoi'])) : 'Vừa đăng nhập' ?></small>
-              </div>
-            </div>
-            <div class="col-auto">
-              <i class="fas fa-user fa-2x text-gray-300"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- Số hóa đơn chưa thanh toán -->
-  <div class="col-xl-4 col-md-6 mb-4">
-    <a href="?controller=hoadon&action=index" class="text-decoration-none">
-      <div class="card border-left-warning shadow h-100 py-2">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Số Hóa Đơn Cần Thanh Toán</div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($chua_thanh_toan['so_luong'] ?? 0) ?> hóa đơn</div>
-            </div>
-            <div class="col-auto">
-              <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- Tổng tiền cần thanh toán -->
-  <div class="col-xl-4 col-md-6 mb-4">
-    <a href="?controller=hoadon&action=index" class="text-decoration-none">
-      <div class="card border-left-danger shadow h-100 py-2">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Tổng Tiền Cần Thanh Toán</div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($chua_thanh_toan['tong_tien'] ?? 0) ?> VND</div>
-            </div>
-            <div class="col-auto">
-              <i class="fas fa-wallet fa-2x text-gray-300"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </a>
-  </div>
-</div>
 
 <div class="row">
   <div class="col-12">
