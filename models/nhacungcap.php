@@ -102,4 +102,22 @@ class NhaCungCap
     $stmt = $db->prepare($sql);
     return $stmt->execute([$ten, $dia_chi, $so_dien_thoai, $nguoi_dung_id]);
   }
+
+  public static function hasDichVuOrHoaDon($id, $user_id)
+  {
+    $db = DB::getInstance();
+    // Check DichVu
+    $req = $db->prepare('SELECT COUNT(*) as count FROM dich_vu WHERE nha_cung_cap_id = :id AND nguoi_dung_id = :user_id');
+    $req->execute(array('id' => $id, 'user_id' => $user_id));
+    $resDV = $req->fetch();
+    if ($resDV['count'] > 0) return true;
+
+    // Check HoaDon
+    $req2 = $db->prepare('SELECT COUNT(*) as count FROM hoa_don WHERE nha_cung_cap_id = :id AND nguoi_dung_id = :user_id');
+    $req2->execute(array('id' => $id, 'user_id' => $user_id));
+    $resHD = $req2->fetch();
+    if ($resHD['count'] > 0) return true;
+
+    return false;
+  }
 }

@@ -6,14 +6,16 @@ class NguoiDung
   public $ho_ten;
   public $email;
   public $vai_tro;
+  public $lan_dang_nhap_cuoi;
 
-  public function __construct($ma_nd, $ten_dang_nhap, $ho_ten, $email, $vai_tro = 0)
+  public function __construct($ma_nd, $ten_dang_nhap, $ho_ten, $email, $vai_tro = 0, $lan_dang_nhap_cuoi = null)
   {
     $this->ma_nd = $ma_nd;
     $this->ten_dang_nhap = $ten_dang_nhap;
     $this->ho_ten = $ho_ten;
     $this->email = $email;
     $this->vai_tro = $vai_tro;
+    $this->lan_dang_nhap_cuoi = $lan_dang_nhap_cuoi;
   }
 
   public static function kiemTraDangNhap($ten_dang_nhap, $mat_khau)
@@ -23,13 +25,20 @@ class NguoiDung
     $stmt->execute([$ten_dang_nhap, $mat_khau]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($item) {
-      return new NguoiDung(
+      $nguoiDung = new NguoiDung(
         $item['ma_nd'],
         $item['ten_dang_nhap'],
         $item['ho_ten'],
         $item['email'],
-        $item['vai_tro']
+        $item['vai_tro'],
+        $item['lan_dang_nhap_cuoi']
       );
+
+      // Cập nhật lại thời gian đăng nhập mới nhất
+      $stmtUpdate = $db->prepare('UPDATE nguoi_dung SET lan_dang_nhap_cuoi = NOW() WHERE ma_nd = ?');
+      $stmtUpdate->execute([$item['ma_nd']]);
+
+      return $nguoiDung;
     }
     return null;
   }

@@ -118,8 +118,11 @@ class DichvuController extends BaseController
       return;
     }
 
-    // Check if invoices use this service (we need to update hoadon model later to count by dich_vu_id)
-    // For now we will allow delete or just skip constraint checking if not implemented
+    if (DichVu::hasHoaDon($id, $user_id)) {
+      $url_danh_sach = route('dichvu', 'index');
+      redirect_with($url_danh_sach, 'error', 'Không thể xóa dịch vụ này vì đã có hóa đơn liên kết!');
+      return;
+    }
     
     $ket_qua = DichVu::delete($id, $user_id);
 

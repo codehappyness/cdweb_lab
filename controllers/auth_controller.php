@@ -38,7 +38,8 @@ class AuthController
           'ten_dang_nhap' => $user->ten_dang_nhap,
           'ho_ten' => $user->ho_ten,
           'email' => $user->email,
-          'vai_tro' => $user->vai_tro
+          'vai_tro' => $user->vai_tro,
+          'lan_dang_nhap_cuoi' => $user->lan_dang_nhap_cuoi
         ];
         header('Location: index.php?controller=home&action=index');
         exit();
@@ -107,8 +108,11 @@ class AuthController
 
   public function logout()
   {
+    session_start();
+    session_unset();
     session_destroy();
-    header('Location: index.php?controller=auth&action=login');
+    header("Location: index.php?controller=auth&action=login");
     exit();
   }
 }
+?>

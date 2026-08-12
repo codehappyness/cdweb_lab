@@ -65,7 +65,7 @@ Hệ thống được thiết kế với các module chức năng chính sau:
 
 * Hệ thống tự động so sánh ngày hiện tại với `NgayHanChot` của các hóa đơn chưa thanh toán.
 
-* Đưa ra cảnh báo nổi bật trên trang chủ (Dashboard).
+* Đưa ra cảnh báo nổi bật ngay trên cùng của trang chủ (Dashboard) với khung màu đỏ (Alert) kèm danh sách các hóa đơn sắp đến hạn (trong vòng 7 ngày) hoặc đã quá hạn thanh toán.
 
 **4. Lưu trữ và đối chiếu giao dịch**
 
@@ -78,10 +78,14 @@ Hệ thống được thiết kế với các module chức năng chính sau:
 
 **5. Thống kê và báo cáo trực quan**
 
-* Lọc dữ liệu thu chi theo khoảng thời gian.
+* Lọc dữ liệu thu chi theo khoảng thời gian (công cụ "Chọn tháng").
 
-
-* Xuất biểu đồ cột/đường so sánh chi phí giữa các tháng hoặc giữa các nhà cung cấp dịch vụ.
+* **Bảng điều khiển (Dashboard) thông minh:** Tích hợp trực tiếp màn hình thống kê vào trang chủ.
+  * Hiển thị các Thẻ thông tin (Cards) tóm tắt: Thông tin người dùng (Họ tên, lần đăng nhập cuối), Tổng số lượng hóa đơn chưa thanh toán, và Tổng tiền cần thanh toán.
+  * Các thẻ thông tin được tích hợp liên kết (lối tắt) giúp người dùng nhấp vào để chuyển thẳng đến màn hình Quản lý Hóa đơn.
+* **Biểu đồ động:** 
+  * Khi không chọn tháng: Hiển thị Biểu đồ cột (Bar Chart) so sánh tổng chi phí hóa đơn theo từng kỳ cước.
+  * Khi chọn 1 tháng cụ thể: Hệ thống tự động chuyển sang Biểu đồ tròn (Pie Chart) thể hiện cơ cấu phần trăm chi phí của từng dịch vụ trong tháng đó.
 
 
 
@@ -263,10 +267,16 @@ Hệ thống cung cấp cơ chế bảo mật và phân quyền rõ ràng với 
   * Giới hạn quyền truy cập: Chỉ Admin (`vai_tro == 1`) mới vào được.
   * Các hàm `index`, `add`, `store`, `edit`, `update`, `delete`: Quản lý danh sách người dùng, cấp quyền, đổi mật khẩu.
 
+* **Controller Hồ sơ cá nhân (`controllers/profile_controller.php`):**
+  * Cho phép tất cả người dùng đang đăng nhập tự chỉnh sửa thông tin cá nhân của mình.
+  * Hỗ trợ cập nhật: Họ tên, Email, Mật khẩu mới (Tên đăng nhập được khóa cứng).
+  * Ghi nhận và hiển thị thời gian "Đăng nhập lần cuối" (`lan_dang_nhap_cuoi`) để tăng cường giám sát bảo mật tài khoản.
+
 * **View (Giao diện):**
   * `login.php` và `register.php`: Các trang công khai sử dụng thiết kế chuyên biệt, đẹp mắt.
+  * Thư mục `views/auth/profile.php`: Giao diện chỉnh sửa hồ sơ người dùng.
   * Thư mục `views/nguoidung/`: Giao diện riêng cho Admin (Danh sách bảng, Form chọn vai trò).
-  * `sidebar.php`: Render menu thông minh, chỉ xuất hiện "Quản lý Người dùng" khi `vai_tro == 1`.
+  * `sidebar.php` & `header.php`: Render menu thông minh, tích hợp lối tắt đến Hồ sơ cá nhân và giới hạn tính năng Quản lý Người dùng theo phân quyền.
 
 #### 5. Cơ chế phân tách Nhà cung cấp và Dịch vụ (Provider - Service Relation)
 
@@ -463,7 +473,7 @@ Nhóm tiến hành đóng vai người dùng cuối để thực hiện các k�
 **2. Gỡ lỗi và Tối ưu hóa mã nguồn (Bug Fixing & Code Optimization)**
 
 * **Debug & Fix Bugs:** Ghi nhận lại toàn bộ các ngoại lệ (exceptions) hoặc lỗi logic phát hiện trong quá trình kiểm thử. Dò tìm lại các dòng code gây lỗi ở tầng Controller hoặc Model và tiến hành sửa chữa triệt để.
-* **Refactoring:** Dọn dẹp các đoạn mã dư thừa, căn chỉnh lại chuẩn format code (PSR), và bổ sung các dòng comment (chú thích) rõ ràng cho các khối lệnh phức tạp để mã nguồn dễ đọc và dễ bảo trì về sau.
+* **Refactoring & Clean up:** Dọn dẹp mã nguồn di sản (Legacy Code), loại bỏ hoàn toàn các module và bảng cơ sở dữ liệu không còn sử dụng (như Khách hàng, Sản phẩm, Danh mục dùng trong thương mại điện tử cũ). Tinh gọn chuẩn cấu trúc MVC chỉ tập trung xử lý lõi Thu - Chi tiện ích. Bổ sung các dòng comment (chú thích) rõ ràng cho các khối lệnh phức tạp để mã nguồn dễ đọc và dễ bảo trì về sau.
 
 **3. Đóng gói và Viết báo cáo tổng kết (Documentation & Reporting)**
 

@@ -131,4 +131,13 @@ class DichVu
     $stmt = $db->prepare($sql);
     return $stmt->execute([$ten_dich_vu, $mo_ta, $nha_cung_cap_id, $nguoi_dung_id]);
   }
+
+  public static function hasHoaDon($id, $user_id)
+  {
+    $db = DB::getInstance();
+    $req = $db->prepare('SELECT COUNT(*) as count FROM hoa_don WHERE dich_vu_id = :id AND nguoi_dung_id = :user_id');
+    $req->execute(array('id' => $id, 'user_id' => $user_id));
+    $result = $req->fetch();
+    return $result['count'] > 0;
+  }
 }

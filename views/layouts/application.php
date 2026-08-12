@@ -15,7 +15,30 @@
      rel="stylesheet">
    <!-- Custom styles for this template-->
    <link href="assets/css/sb-admin-2.min.css" rel="stylesheet">
-
+   
+   <style>
+     body, .table, .card-body, p, span, div {
+       color: #2a2a2a;
+     }
+     .text-gray-800, .text-gray-600, .text-gray-900 {
+       color: #1a1a1a !important;
+     }
+     .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+       color: #111 !important;
+       font-weight: 700 !important;
+     }
+     /* Fix sidebar text colors that were overridden */
+     .sidebar span, .sidebar div, .sidebar i, .sidebar a {
+       color: rgba(255, 255, 255, 0.8) !important;
+     }
+     .sidebar .nav-item .nav-link span {
+       font-weight: 600;
+       color: #fff !important;
+     }
+     .sidebar .sidebar-heading {
+       color: rgba(255, 255, 255, 0.4) !important;
+     }
+   </style>
  </head>
  <body id="page-top">
    <!-- Page Wrapper -->
@@ -55,12 +78,12 @@
      <div class="modal-dialog" role="document">
        <div class="modal-content">
          <div class="modal-header">
-           <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+           <h5 class="modal-title" id="exampleModalLabel">Xác nhận đăng xuất</h5>
+           <button class="close" type="button" data-dismiss="modal" aria-label="Đóng">
              <span aria-hidden="true">×</span>
            </button>
          </div>
-         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+         <div class="modal-body">Bạn có chắc chắn muốn đăng xuất khỏi phiên làm việc hiện tại không?</div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
             <a class="btn btn-primary" href="index.php?controller=auth&action=logout">Đăng xuất</a>

@@ -47,7 +47,22 @@
         <div class="card o-hidden border-0 shadow-lg my-5">
           <div class="card-body p-0">
             <div class="row">
-              <div class="col-lg-6 d-none d-lg-block register-image"></div>
+              <div class="col-lg-6 d-none d-lg-flex align-items-center bg-gradient-success text-white p-5">
+                <div>
+                  <div class="text-center mb-4">
+                    <i class="fas fa-wallet fa-4x text-light mb-3"></i>
+                    <h3 class="font-weight-bold">QUẢN LÝ TÀI CHÍNH</h3>
+                  </div>
+                  <h5 class="font-weight-bold mb-4 text-warning" style="line-height: 1.5;">Đề tài: Xây dựng Ứng dụng Web Quản lý Chi tiêu và Tiện ích cá nhân</h5>
+                  <p class="mb-2"><i class="fas fa-book mr-2"></i><strong>Môn học:</strong> Chuyên đề web</p>
+                  <p class="mb-2"><i class="fas fa-chalkboard-teacher mr-2"></i><strong>Giảng viên HD:</strong> ThS. Phạm Thị Hồng Thu</p>
+                  <hr class="border-light my-4" style="opacity: 0.3;">
+                  <p class="font-weight-bold text-uppercase mb-2">Thực hiện bởi (Nhóm 2):</p>
+                  <ul class="list-unstyled mt-3">
+                    <li class="mb-2"><i class="fas fa-user-graduate mr-2"></i>Trương Nam Trung - 06130200011</li>
+                  </ul>
+                </div>
+              </div>
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">

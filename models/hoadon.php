@@ -238,10 +238,28 @@ class Hoadon
     return $list;
   }
 
+  public static function getChuaThanhToanSummary($nguoi_dung_id = null)
+  {
+    $db = DB::getInstance();
+    $sql = "SELECT COUNT(*) as so_luong, SUM(so_tien_can_dong) as tong_tien FROM hoa_don WHERE trang_thai = 0";
+    $params = [];
+    if (!empty($nguoi_dung_id)) {
+      $sql .= " AND nguoi_dung_id = ?";
+      $params[] = $nguoi_dung_id;
+    }
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return [
+      'so_luong' => $res['so_luong'] ?? 0,
+      'tong_tien' => $res['tong_tien'] ?? 0
+    ];
+  }
+
   public static function getThongKeTheoThang($nguoi_dung_id = null)
   {
     $db = DB::getInstance();
-    $sql = "SELECT DATE_FORMAT(ngay_tao, '%m/%Y') as thang, 
+    $sql = "SELECT ky_cuoc as thang, 
                    SUM(so_tien_can_dong) as tong_tien 
             FROM hoa_don 
             WHERE 1=1";
@@ -250,7 +268,29 @@ class Hoadon
       $sql .= " AND nguoi_dung_id = ?";
       $params[] = $nguoi_dung_id;
     }
-    $sql .= " GROUP BY thang ORDER BY MIN(ngay_tao) ASC";
+    $sql .= " GROUP BY ky_cuoc ORDER BY RIGHT(ky_cuoc, 4) ASC, LEFT(ky_cuoc, 2) ASC";
+            
+    $result = $db->prepare($sql);
+    $result->execute($params);
+    return $result->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public static function getThongKeDichVuTheoThang($thang, $nguoi_dung_id = null)
+  {
+    // $thang từ form là định dạng YYYY-MM. Cần chuyển thành MM/YYYY để khớp với ky_cuoc.
+    $ky_cuoc_format = date('m/Y', strtotime($thang . '-01'));
+
+    $db = DB::getInstance();
+    $sql = "SELECT d.ten_dich_vu, SUM(h.so_tien_can_dong) as tong_tien 
+            FROM hoa_don h
+            JOIN dich_vu d ON h.dich_vu_id = d.id
+            WHERE h.ky_cuoc = ?";
+    $params = [$ky_cuoc_format];
+    if (!empty($nguoi_dung_id)) {
+      $sql .= " AND h.nguoi_dung_id = ?";
+      $params[] = $nguoi_dung_id;
+    }
+    $sql .= " GROUP BY d.id";
             
     $result = $db->prepare($sql);
     $result->execute($params);

@@ -137,10 +137,10 @@ class NhacungcapController extends BaseController
       return;
     }
 
-    $soHoadon = Hoadon::countByNhaCungCapId($nhacungcap->id);
-    if($soHoadon){
+    if (NhaCungCap::hasDichVuOrHoaDon($id, $user_id)) {
       $url_danh_sach = route('nhacungcap', 'index');
-      redirect_with($url_danh_sach, 'error', 'Bạn không thể xóa nhà cung cấp này');
+      redirect_with($url_danh_sach, 'error', 'Không thể xóa nhà cung cấp này vì đã có dịch vụ hoặc hóa đơn liên kết!');
+      return;
     }
 
     $ket_qua = NhaCungCap::delete($id, $user_id);
