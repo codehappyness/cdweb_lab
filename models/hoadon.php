@@ -206,7 +206,6 @@ class Hoadon
     $db = DB::getInstance();
     $sql = "SELECT * FROM hoa_don 
             WHERE trang_thai = 0 
-            AND ngay_han_chot >= NOW() 
             AND ngay_han_chot <= DATE_ADD(NOW(), INTERVAL 7 DAY)";
     $params = [];
     if (!empty($nguoi_dung_id)) {

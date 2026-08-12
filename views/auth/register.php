@@ -59,7 +59,11 @@
                   <hr class="border-light my-4" style="opacity: 0.3;">
                   <p class="font-weight-bold text-uppercase mb-2">Thực hiện bởi (Nhóm 2):</p>
                   <ul class="list-unstyled mt-3">
-                    <li class="mb-2"><i class="fas fa-user-graduate mr-2"></i>Trương Nam Trung - 06130200011</li>
+                    <li class="mb-2"><i class="fas fa-user-graduate mr-2"></i>Trương Nam Trung - 06130200005</li>
+                    <li class="mb-2"><i class="fas fa-user-graduate mr-2"></i>Bùi Hải Dương - 06130200006</li>
+                    <li class="mb-2"><i class="fas fa-user-graduate mr-2"></i>Phan Thanh Lợi - 06130200007</li>
+                    <li class="mb-2"><i class="fas fa-user-graduate mr-2"></i>Nguyễn Huỳnh Thanh Sơn - 06130200008</li>
+                    <li class="mb-2"><i class="fas fa-user-graduate mr-2"></i>Lê Minh Trí - 06130200010</li>
                   </ul>
                 </div>
               </div>

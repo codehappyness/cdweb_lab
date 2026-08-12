@@ -8,7 +8,11 @@ TRƯỜNG ĐẠI HỌC CỬU LONG
 **Nhóm thực hiện:** Nhóm 2
 **Sinh viên thực hiện:**
 
-* Trương Nam Trung – MSSV: 06130200011
+* Trương Nam Trung – MSSV: 06130200005
+* Bùi Hải Dương - MSSV: 06130200006
+* Phan Thanh Lợi - MSSV: 06130200007
+* Nguyễn Huỳnh Thanh Sơn - MSSV: 06130200008
+* Lê Minh Trí - MSSV: 06130200010
 
 Vĩnh Long, tháng 08 năm 2026
 
@@ -87,6 +91,12 @@ Hệ thống được thiết kế với các module chức năng chính sau:
   * Khi không chọn tháng: Hiển thị Biểu đồ cột (Bar Chart) so sánh tổng chi phí hóa đơn theo từng kỳ cước.
   * Khi chọn 1 tháng cụ thể: Hệ thống tự động chuyển sang Biểu đồ tròn (Pie Chart) thể hiện cơ cấu phần trăm chi phí của từng dịch vụ trong tháng đó.
 
+**6. Quản lý người dùng và Phân quyền**
+
+* **Quản trị hệ thống (Admin):** Quản trị viên (vai_tro = 1) có quyền xem, thêm, sửa, xóa, cấp quyền và đặt lại mật khẩu cho tất cả tài khoản trong hệ thống.
+* **Người dùng (User):** Người dùng thông thường tự cập nhật thông tin cá nhân (Họ tên, email, đổi mật khẩu) thông qua tính năng Hồ sơ cá nhân.
+* Hệ thống lưu trữ lịch sử **Đăng nhập lần cuối** để tăng cường tính bảo mật.
+
 
 
 ---
@@ -129,6 +139,8 @@ usecaseDiagram
     UC5 <.. UC5_1 : <<extend>>
 
 ```
+
+*(Chi tiết các kịch bản, luồng sự kiện chính/phụ và tiền/hậu điều kiện của từng chức năng trên được ghi chép đầy đủ tại tài liệu riêng: `docs/dac_ta_usecase.md`)*
 
 **1.2. Biểu đồ Lớp (Class Diagram)**
 Dựa trên cấu trúc cơ sở dữ liệu được định nghĩa, hệ thống bao gồm 4 lớp thực thể chính có mối quan hệ trực tiếp với nhau, trong đó có bổ sung lớp Người dùng để quản lý dữ liệu cá nhân hóa.
@@ -216,6 +228,8 @@ stateDiagram-v2
     CapNhatTrangThaiThanhToan --> [*]
 
 ```
+
+*(Bản mô tả và đặc tả chi tiết cho từng Thực thể trong CSDL (Entity) cũng như quy trình các bước trong Biểu đồ Hoạt động (Activity Diagram) được đính kèm tại tài liệu riêng:* `docs/dac_ta_uml.md` *)*
 
 #### 2. Thiết kế cơ sở dữ liệu
 
