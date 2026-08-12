@@ -1,8 +1,6 @@
-# Phân tích UML: Hệ thống Quản lý Chi tiêu và Tiện ích cá nhân
+# Hệ thống Quản lý Chi tiêu và Tiện ích cá nhân
 
-Tài liệu này chứa các phân tích thiết kế hệ thống dựa trên yêu cầu tính năng cốt lõi và kiến trúc PHP MVC.
-
-## 1. Biểu đồ Use Case (Mô hình tính năng)
+## 1. Biểu đồ Use Case 
 Thể hiện tương tác của người dùng với các tính năng của hệ thống.
 
 ```plantuml
@@ -36,7 +34,7 @@ UC6 .up.> UC4 : <<include>> \n(Đính kèm ảnh khi giao dịch)
 @enduml
 ```
 
-## 2. Biểu đồ ERD (Thực thể Liên kết - Cơ sở dữ liệu)
+## 2. Biểu đồ ERD 
 Được thiết kế chuẩn hóa để lưu trữ toàn bộ các thông tin từ nhà cung cấp, hóa đơn, thông số tiêu thụ cho đến đối chiếu giao dịch.
 
 ```plantuml
@@ -56,7 +54,6 @@ entity "DanhMucDichVu" as DanhMucDichVu {
 entity "HoaDon" as HoaDon {
   * MaHoaDon : VARCHAR(20) <<PK>>
   --
-  * MaDichVu : VARCHAR(10) <<FK>>
   * KyCuoc : VARCHAR(10) (VD: 05/2024)
   * SoTienCanDong : FLOAT
   ChiSoTieuThu : FLOAT (VD: kWh, Khối nước)
@@ -91,7 +88,7 @@ GiaoDich ||--o{ ChungTuDienTu : "Đính kèm"
 @enduml
 ```
 
-## 3. Biểu đồ Hoạt động (Activity Diagram) - Quy trình quản lý 1 hóa đơn
+## 3. Biểu đồ Hoạt động - Quy trình quản lý 1 hóa đơn
 Mô tả luồng người dùng xử lý nghiệp vụ kể từ lúc nhận thông báo đóng tiền đến lúc hoàn tất giao dịch và lưu trữ chứng từ.
 
 ```plantuml
@@ -125,14 +122,54 @@ stop
 @enduml
 ```
 
-## 4. Biểu đồ Kiến trúc MVC (Class Diagram)
-Áp dụng cấu trúc thư mục từ file giáo trình (`controllers`, `models`, `views`, `connection.php`). Biểu đồ này giúp hình dung luồng code phía backend.
+## 4. Biểu đồ thanh toán  
+Biểu đồ tuần tự mô tả chi tiết luồng xử lý của chức năng "Thanh toán hóa đơn"
+```plantuml
+@startuml
+autonumber
+actor "Người dùng" as User
+boundary "Giao diện Thanh toán\n(pay.php)" as View
+control "HoaDonController" as Controller
+entity "HoaDon Model" as Hoadon
+entity "ChungTu Model" as ChungTu
+database "MySQL Database" as DB
+
+User -> View : Bấm "Thanh toán" hóa đơn
+View --> User : Hiển thị Form nhập (Nền tảng GD, Ảnh)
+User -> View : Nhập thông tin & Upload ảnh, Bấm "Lưu"
+View -> Controller : POST /store_pay (id, nền tảng, file)
+activate Controller
+
+Controller -> Controller : Validate dữ liệu & Lưu file ảnh lên máy chủ
+Controller -> Hoadon : Cập nhật (trạng thái=1, nền tảng)
+activate Hoadon
+Hoadon -> DB : UPDATE hoa_don
+DB --> Hoadon : Thành công
+Hoadon --> Controller : OK
+deactivate Hoadon
+
+Controller -> ChungTu : add(hoa_don_id, loai_chung_tu, url)
+activate ChungTu
+ChungTu -> DB : INSERT INTO chung_tu_dien_tu
+DB --> ChungTu : Thành công
+ChungTu --> Controller : OK
+deactivate ChungTu
+
+Controller --> View : Redirect kèm thông báo Thành công
+deactivate Controller
+View --> User : Hiển thị Danh sách & Badge "Đã thanh toán"
+@enduml
+
+```
+
+## 5. Biểu đồ Kiến trúc MVC 
+Biểu đồ này giúp hình dung luồng code phía backend.
 
 ```plantuml
 @startuml
 package "Views" {
-  class "danhsachdichvu.php"
-  class "nhaphoadon.php"
+  class "dmdichvu.php"
+  class "hoadon.php"
   class "canhbao.php"
   class "thongke.php"
 }
