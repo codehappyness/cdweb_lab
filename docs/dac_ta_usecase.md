@@ -1,102 +1,92 @@
-# ĐẶC TẢ CÁC USE CASE (USE CASE SPECIFICATIONS)
+# TÀI LIỆU ĐẶC TẢ USE CASE (USE CASE SPECIFICATIONS)
 
-Tài liệu này cung cấp mô tả chi tiết (đặc tả) cho các Use Case cốt lõi trong Hệ thống Quản lý Chi tiêu và Tiện ích cá nhân.
-
----
-
-## 1. Đặc tả Use Case: Đăng nhập (UC_DangNhap)
-
-* **Tác nhân (Actor):** Người dùng, Quản trị viên (Admin).
-* **Mô tả:** Cho phép người dùng truy cập vào hệ thống với phân quyền tương ứng để quản lý dữ liệu cá nhân hoặc quản trị hệ thống.
-* **Tiền điều kiện:** Người dùng phải có tài khoản đã được đăng ký và kích hoạt trong hệ thống.
-* **Luồng sự kiện chính (Basic Flow):**
-  1. Người dùng truy cập trang Đăng nhập.
-  2. Người dùng nhập `Tên đăng nhập` và `Mật khẩu`.
-  3. Người dùng nhấn nút "Đăng nhập".
-  4. Hệ thống kiểm tra thông tin đối chiếu với cơ sở dữ liệu `nguoi_dung`.
-  5. Nếu thông tin chính xác, hệ thống thiết lập Session, cập nhật thời gian `lan_dang_nhap_cuoi` và chuyển hướng người dùng đến trang chủ (Dashboard).
-* **Luồng sự kiện rẽ nhánh (Alternate Flow):**
-  * *Sai thông tin:* Ở bước 4, nếu Tên đăng nhập hoặc Mật khẩu sai, hệ thống từ chối đăng nhập, giữ nguyên trang và hiển thị thông báo lỗi "Tên đăng nhập hoặc mật khẩu không chính xác".
-* **Hậu điều kiện:** Người dùng truy cập thành công vào hệ thống.
+Tài liệu này cung cấp mô tả chi tiết (Kịch bản, Tiền/Hậu điều kiện, Luồng sự kiện chính/phụ) cho các Use Case cốt lõi của **Hệ thống Quản lý Chi tiêu và Tiện ích cá nhân**.
 
 ---
 
-## 2. Đặc tả Use Case: Quản lý danh mục (Nhà cung cấp / Dịch vụ)
+## 1. UC1 - Quản lý Danh mục (Nhà cung cấp & Dịch vụ)
+*Dữ liệu Danh mục mang tính chất cá nhân hóa, mỗi người dùng tự quản lý danh sách của riêng mình.*
 
-* **Tác nhân (Actor):** Người dùng.
-* **Mô tả:** Cho phép người dùng Thêm, Xem, Sửa, Xóa thông tin các nhà cung cấp và các loại dịch vụ tiện ích mà họ đang sử dụng.
-* **Tiền điều kiện:** Người dùng đã Đăng nhập thành công.
-* **Luồng sự kiện chính (Basic Flow):**
-  1. Người dùng chọn menu "Nhà cung cấp" hoặc "Dịch vụ" trên thanh Sidebar.
-  2. Hệ thống hiển thị danh sách các mục thuộc sở hữu của người dùng đó (lọc theo `nguoi_dung_id`).
-  3. Người dùng chọn thao tác (Thêm mới, Sửa, hoặc Xóa).
-  4. Hệ thống hiển thị Form nhập liệu tương ứng (nếu Thêm/Sửa) hoặc Hộp thoại xác nhận (nếu Xóa).
-  5. Người dùng điền thông tin và nhấn Lưu.
-  6. Hệ thống kiểm tra tính hợp lệ của dữ liệu, tiến hành cập nhật vào Database và thông báo thành công.
-* **Luồng sự kiện rẽ nhánh (Alternate Flow):**
-  * *Ràng buộc khóa ngoại khi Xóa:* Ở bước 6, nếu người dùng Xóa một Nhà cung cấp đã có Hóa đơn hoặc Dịch vụ liên kết, hệ thống sẽ chặn thao tác và báo lỗi "Không thể xóa vì đã có dữ liệu liên kết".
-* **Hậu điều kiện:** Danh sách Nhà cung cấp / Dịch vụ được cập nhật chính xác trong cơ sở dữ liệu.
+* **Tác nhân (Actor):** Quản trị viên (Admin) / Người dùng (User).
+* **Mô tả:** Cho phép người dùng thêm, xem, sửa, xóa các đơn vị cung cấp dịch vụ (VD: EVN, VNPT) và các dịch vụ tương ứng (VD: Tiền điện, Internet) do chính họ tạo ra.
+* **Tiền điều kiện:** Người dùng đã đăng nhập thành công.
+* **Hậu điều kiện:** Dữ liệu danh mục được lưu vào CSDL, gắn với `nguoi_dung_id` và sẵn sàng để chọn khi tạo Hóa đơn.
 
----
+**Luồng sự kiện chính (Basic Flow):**
+1. Người dùng chọn menu "Nhà cung cấp" hoặc "Dịch vụ".
+2. Hệ thống hiển thị danh sách các mục CỦA RIÊNG người dùng đó.
+3. Người dùng nhấn nút "Thêm mới".
+4. Hệ thống hiển thị Form nhập liệu.
+5. Người dùng điền thông tin và nhấn Lưu.
+6. Hệ thống kiểm tra dữ liệu hợp lệ, gắn `nguoi_dung_id` và lưu vào cơ sở dữ liệu.
+7. Hệ thống quay về trang danh sách và thông báo thành công.
 
-## 3. Đặc tả Use Case: Quản lý và Cập nhật Hóa đơn
-
-* **Tác nhân (Actor):** Người dùng.
-* **Mô tả:** Cho phép người dùng ghi nhận thông tin hóa đơn tiện ích của từng kỳ cước, cập nhật số tiền và trạng thái thanh toán.
-* **Tiền điều kiện:** Đã Đăng nhập; Đã khai báo ít nhất 1 Dịch vụ / Nhà cung cấp.
-* **Luồng sự kiện chính (Basic Flow):**
-  1. Người dùng vào chức năng "Danh sách Hóa đơn".
-  2. Người dùng nhấn nút "Thêm mới".
-  3. Hệ thống hiển thị Form nhập liệu (Chọn Dịch vụ, Kỳ cước, Số tiền, Hạn chót).
-  4. Người dùng điền thông tin và Lưu.
-  5. Hệ thống lưu Hóa đơn với trạng thái mặc định là "Chưa thanh toán" (0).
-* **Hậu điều kiện:** Hóa đơn mới xuất hiện trên hệ thống và có khả năng kích hoạt Cảnh báo nếu gần đến hạn.
+**Luồng rẽ nhánh (Alternate Flow):**
+* *(5a) Bỏ trống trường bắt buộc:* Hệ thống chặn lại bằng HTML5 Validation và yêu cầu nhập đầy đủ.
+* *(Thao tác Xóa - Delete):* Khi người dùng nhấn nút Xóa, hệ thống kiểm tra xem Nhà cung cấp/Dịch vụ này đã có Hóa đơn nào tham chiếu tới chưa. Nếu có, hệ thống hiển thị Alert từ chối xóa để bảo vệ toàn vẹn dữ liệu.
 
 ---
 
-## 4. Đặc tả Use Case: Thanh toán và Upload chứng từ
+## 2. UC2 - Quản lý Hóa đơn và Chỉ số
+*Dữ liệu Hóa đơn mang tính cá nhân hóa tuyệt đối (Data Isolation).*
 
-* **Tác nhân (Actor):** Người dùng.
-* **Mô tả:** Người dùng cập nhật trạng thái hóa đơn thành "Đã thanh toán" và đính kèm biên lai điện tử.
-* **Tiền điều kiện:** Tồn tại ít nhất 1 Hóa đơn "Chưa thanh toán".
-* **Luồng sự kiện chính (Basic Flow):**
-  1. Tại Danh sách Hóa đơn, người dùng bấm nút "Thanh toán" ở hóa đơn cần xử lý.
-  2. Hệ thống hiển thị màn hình Chi tiết Thanh toán.
-  3. Người dùng chọn hình thức thanh toán (Nền tảng giao dịch) và tải lên 1 tệp hình ảnh (.jpg, .png) làm biên lai chứng từ.
-  4. Người dùng bấm "Xác nhận thanh toán".
-  5. Hệ thống kiểm tra định dạng và dung lượng tệp. Nếu hợp lệ, hệ thống lưu tệp vào thư mục `resource/assets/uploads/`.
-  6. Hệ thống chuyển trạng thái Hóa đơn sang "Đã thanh toán" và ghi đường dẫn file vào bảng `chung_tu_dien_tu`.
-* **Luồng sự kiện rẽ nhánh (Alternate Flow):**
-  * *Tệp không hợp lệ:* Nếu tệp tải lên vượt quá dung lượng hoặc sai định dạng, hệ thống từ chối và báo lỗi ngay trên giao diện.
-* **Hậu điều kiện:** Hóa đơn được thanh toán xong, số liệu sẽ được tổng hợp vào Thống kê và biến mất khỏi bảng Cảnh báo.
+* **Tác nhân (Actor):** Người dùng (User).
+* **Mô tả:** Cho phép người dùng ghi nhận các khoản thu/chi phát sinh định kỳ (tiền điện, tiền nước).
+* **Tiền điều kiện:** Người dùng đã đăng nhập. Đã có sẵn ít nhất 1 Nhà cung cấp và 1 Dịch vụ do mình tạo.
+* **Hậu điều kiện:** Hóa đơn được tạo/cập nhật thành công và gắn cứng với `nguoi_dung_id`.
 
----
-
-## 5. Đặc tả Use Case: Xem Thống kê & Báo cáo (Dashboard)
-
-* **Tác nhân (Actor):** Người dùng.
-* **Mô tả:** Hệ thống tự động tổng hợp dữ liệu, đưa ra cảnh báo quá hạn và vẽ biểu đồ chi tiêu.
-* **Tiền điều kiện:** Đã Đăng nhập.
-* **Luồng sự kiện chính (Basic Flow):**
-  1. Người dùng nhấp vào logo hoặc chọn menu "Dashboard" / "Thống kê".
-  2. Hệ thống truy vấn CSDL để lấy Tổng số Hóa đơn nợ và Tổng tiền nợ. Hiển thị lên các Thẻ (Cards).
-  3. Hệ thống kiểm tra các Hóa đơn có `ngay_han_chot` trong vòng 7 ngày tới hoặc đã quá hạn, sau đó hiển thị Alert cảnh báo màu đỏ.
-  4. Hệ thống mặc định load dữ liệu gom nhóm theo tháng và render Biểu đồ Cột (Bar Chart).
-  5. (Tùy chọn) Người dùng sử dụng công cụ "Chọn tháng" và nhấn Lọc.
-  6. Hệ thống truy xuất dữ liệu riêng của tháng đó và chuyển đổi sang Biểu đồ Tròn (Pie Chart) thể hiện cơ cấu chi phí dịch vụ.
-* **Hậu điều kiện:** Không làm thay đổi dữ liệu hệ thống (Chỉ đọc - Read only).
+**Luồng sự kiện chính (Basic Flow):**
+1. Người dùng chọn menu "Quản lý Hóa đơn".
+2. Hệ thống hiển thị danh sách hóa đơn CỦA RIÊNG người dùng đó.
+3. Người dùng chọn "Thêm Hóa đơn".
+4. Người dùng chọn Nhà cung cấp từ Dropdown list.
+5. Hệ thống hiển thị danh sách Dịch vụ tương ứng với Nhà cung cấp vừa chọn.
+6. Người dùng nhập: Kỳ cước, Số tiền, Chỉ số tiêu thụ (nếu có), Ngày hạn chót.
+7. Nhấn Lưu. Hệ thống gắn ID người dùng đang đăng nhập vào Hóa đơn và lưu xuống DB.
 
 ---
 
-## 6. Đặc tả Use Case: Quản trị Hệ thống (Admin Only)
+## 3. UC3 - Cập nhật Thanh toán & Upload Chứng từ
+* **Tác nhân (Actor):** Người dùng (User).
+* **Mô tả:** Thực hiện thanh toán cho Hóa đơn và tải lên biên lai, hình ảnh.
+* **Tiền điều kiện:** Tồn tại ít nhất 1 Hóa đơn ở trạng thái "Chưa thanh toán".
+* **Hậu điều kiện:** Hóa đơn chuyển trạng thái thành "Đã thanh toán" và File ảnh được lưu trữ an toàn.
 
+**Luồng sự kiện chính (Basic Flow):**
+1. Người dùng nhấn nút "Cập nhật thanh toán" trên một hóa đơn.
+2. Hệ thống chuyển sang Form thanh toán và upload.
+3. Người dùng chọn tệp từ thiết bị.
+4. Nhấn "Xác nhận thanh toán".
+5. Hệ thống kiểm tra tệp tin (Định dạng hợp lệ: jpg, png, pdf; Dung lượng < 5MB).
+6. Hệ thống di chuyển (upload) file vào thư mục `resource/assets/uploads/`.
+7. Hệ thống mở Transaction: Đổi trạng thái Hóa đơn -> Tạo mới Chứng từ (Lưu URL file).
+8. Hiển thị thông báo "Thanh toán thành công".
+
+---
+
+## 4. UC4 - Xem Thống kê và Báo cáo (Dashboard)
+* **Tác nhân (Actor):** Người dùng (User).
+* **Mô tả:** Xem phân tích tài chính dạng biểu đồ và cảnh báo hạn chót.
+* **Tiền điều kiện:** Người dùng đăng nhập thành công.
+* **Hậu điều kiện:** Không làm thay đổi dữ liệu hệ thống (Read Only).
+
+**Luồng sự kiện chính (Basic Flow):**
+1. Người dùng truy cập Trang chủ (Thống kê).
+2. Hệ thống quét hóa đơn chưa thanh toán của người dùng này.
+3. Nếu có hóa đơn sắp/đã đến hạn, hiển thị Cảnh báo (Alert) màu đỏ/vàng.
+4. Hệ thống kiểm tra tham số "Bộ lọc Tháng":
+   * **Nếu không chọn tháng:** Truy vấn tổng tiền theo Kỳ cước -> Render **Biểu đồ Cột (Bar Chart)**.
+   * **Nếu có chọn tháng:** Lọc dữ liệu của tháng đó, gom nhóm theo Dịch vụ -> Render **Biểu đồ Tròn (Pie Chart)**.
+
+---
+
+## 5. UC5 - Quản trị Hệ thống (Admin Only)
 * **Tác nhân (Actor):** Quản trị viên (Admin).
-* **Mô tả:** Admin quản lý toàn bộ danh sách tài khoản, có quyền cấp lại mật khẩu hoặc vô hiệu hóa người dùng.
-* **Tiền điều kiện:** Đăng nhập bằng tài khoản có `vai_tro = 1`.
-* **Luồng sự kiện chính (Basic Flow):**
-  1. Admin chọn menu "Quản lý Người dùng".
-  2. Hệ thống hiển thị danh sách tất cả các User, bao gồm số lần đăng nhập cuối.
-  3. Admin có thể thực hiện thao tác Thêm người dùng mới, Sửa thông tin, hoặc Cấp quyền Admin cho người khác.
-  4. Hệ thống cập nhật dữ liệu tài khoản vào Database.
-* **Luồng sự kiện rẽ nhánh (Alternate Flow):**
-  * *Truy cập trái phép:* Nếu một người dùng thông thường (`vai_tro = 0`) cố tình nhập URL truy cập vào trang này, hệ thống sẽ phát hiện và bắt buộc chuyển hướng (Redirect) về trang chủ kèm theo thông báo "Bạn không có quyền truy cập chức năng này!".
+* **Mô tả:** Quản lý toàn bộ tài khoản người dùng trên hệ thống.
+* **Tiền điều kiện:** Tài khoản đăng nhập phải có `vai_tro = 1`.
+
+**Luồng sự kiện chính (Basic Flow):**
+1. Admin đăng nhập và truy cập trang Quản lý Người dùng.
+2. Admin có thể "Thêm mới", "Chỉnh sửa" thông tin hoặc phân lại quyền.
+3. Admin nhấn "Xóa" một người dùng.
+4. Hệ thống thực thi **Cascade Delete (Xóa liên đới an toàn)**: Xóa toàn bộ File ảnh upload vật lý -> Xóa dữ liệu Chứng từ -> Xóa Hóa đơn -> Xóa Dịch vụ -> Xóa Nhà cung cấp -> Cuối cùng mới Xóa Tài khoản của người dùng đó để đảm bảo không để lại bất kỳ dữ liệu rác nào trên Database.

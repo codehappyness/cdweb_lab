@@ -1,0 +1,63 @@
+@startuml
+entity "NGUOI_DUNG" as NGUOI_DUNG {
+  *id : bigint <<PK>>
+  --
+  ten_dang_nhap : varchar
+  mat_khau : varchar
+  ho_ten : varchar
+  email : varchar
+  vai_tro : tinyint
+  lan_dang_nhap_cuoi : datetime
+}
+
+entity "NHA_CUNG_CAP" as NHA_CUNG_CAP {
+  *id : bigint <<PK>>
+  --
+  ten : varchar
+  dia_chi : varchar
+  so_dien_thoai : varchar
+  nguoi_dung_id : bigint <<FK>>
+}
+
+entity "DICH_VU" as DICH_VU {
+  *id : bigint <<PK>>
+  --
+  ten_dich_vu : varchar
+  mo_ta : text
+  nha_cung_cap_id : bigint <<FK>>
+  nguoi_dung_id : bigint <<FK>>
+}
+
+entity "HOA_DON" as HOA_DON {
+  *id : bigint <<PK>>
+  --
+  loai_hoa_don : tinyint
+  ky_cuoc : varchar
+  so_tien_can_dong : float
+  chi_so_tieu_thu : varchar
+  ngay_han_chot : datetime
+  trang_thai : varchar
+  dich_vu_id : bigint <<FK>>
+  nha_cung_cap_id : bigint <<FK>>
+  nguoi_dung_id : bigint <<FK>>
+}
+
+entity "CHUNG_TU_DIEN_TU" as CHUNG_TU_DIEN_TU {
+  *id : bigint <<PK>>
+  --
+  loai_chung_tu : varchar
+  duong_dan_file : varchar
+  ngay_tai_len : datetime
+  hoa_don_id : bigint <<FK>> <<Unique>>
+}
+
+NGUOI_DUNG ||--o{ NHA_CUNG_CAP : "Quản lý"
+NGUOI_DUNG ||--o{ DICH_VU : "Quản lý"
+NGUOI_DUNG ||--o{ HOA_DON : "Sở hữu"
+
+NHA_CUNG_CAP ||--o{ DICH_VU : "Cung cấp"
+NHA_CUNG_CAP ||--o{ HOA_DON : "Thuộc về"
+
+DICH_VU ||--o{ HOA_DON : "Phát sinh"
+HOA_DON ||--o| CHUNG_TU_DIEN_TU : "Có (tối đa 1)"
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+start
+:Người dùng chọn Hóa đơn chưa thanh toán;
+:Nhấn nút 'Cập nhật Thanh toán';
+if (Xác nhận số tiền?) then (Không)
+  stop
+else (Có)
+  :Hệ thống chuyển trạng thái Hóa đơn thành 'Đã thanh toán';
+  if (Người dùng có Upload biên lai không?) then (Không)
+    stop
+  else (Có)
+    repeat
+      :Người dùng chọn File hình ảnh/PDF;
+      :Hệ thống kiểm tra định dạng và dung lượng;
+      if (Hợp lệ?) then (Không)
+        :Báo lỗi File không hợp lệ;
+      else (Có)
+        :Lưu File vào thư mục resource/assets/uploads/;
+        :Ghi thông tin đường dẫn vào bảng chung_tu_dien_tu;
+        stop
+      endif
+    repeat while (File không hợp lệ?)
+  endif
+endif
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+left to right direction
+actor "Người Dùng" as Nguoi_Dung
+actor "Quản trị viên (Admin)" as Admin
+
+package "Hệ thống Quản lý Chi tiêu và Tiện ích" {
+  usecase "Đăng ký tài khoản" as UC1
+  usecase "Đăng nhập" as UC2
+  usecase "Quản lý Hồ sơ cá nhân" as UC3
+  usecase "Quản lý Nhà cung cấp" as UC4
+  usecase "Quản lý Dịch vụ" as UC5
+  usecase "Quản lý Hóa đơn" as UC6
+  usecase "Thanh toán & Tải chứng từ" as UC7
+  usecase "Xem Thống kê & Báo cáo" as UC8
+  usecase "Quản lý Tài khoản Hệ thống" as UC9
+}
+
+Nguoi_Dung --> UC1
+Nguoi_Dung --> UC2
+Nguoi_Dung --> UC3
+Nguoi_Dung --> UC4
+Nguoi_Dung --> UC5
+Nguoi_Dung --> UC6
+Nguoi_Dung --> UC7
+Nguoi_Dung --> UC8
+
+Admin --> UC2
+Admin --> UC3
+Admin --> UC9
+
+UC7 .> UC6 : <<extend>>
+UC4 .> UC2 : <<include>>
+UC5 .> UC2 : <<include>>
+UC6 .> UC2 : <<include>>
+UC8 .> UC2 : <<include>>
+@enduml

@@ -131,7 +131,13 @@ class NguoiDung
       // 3. Xóa các hóa đơn
       $db->prepare("DELETE FROM hoa_don WHERE nguoi_dung_id = ?")->execute([$id]);
 
-      // 4. Xóa tài khoản người dùng
+      // 4. Xóa các dịch vụ
+      $db->prepare("DELETE FROM dich_vu WHERE nguoi_dung_id = ?")->execute([$id]);
+
+      // 5. Xóa các nhà cung cấp
+      $db->prepare("DELETE FROM nha_cung_cap WHERE nguoi_dung_id = ?")->execute([$id]);
+
+      // 6. Xóa tài khoản người dùng
       $sql = "DELETE FROM nguoi_dung WHERE ma_nd = ?";
       $stmt = $db->prepare($sql);
       $result = $stmt->execute([$id]);

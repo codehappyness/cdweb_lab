@@ -108,36 +108,32 @@ Hệ thống được thiết kế với các module chức năng chính sau:
 **1.1. Biểu đồ Use Case (Use Case Diagram)**
 Biểu đồ mô tả các chức năng tương tác cốt lõi của người dùng với hệ thống quản lý chi tiêu.
 
-```mermaid
-usecaseDiagram
-    actor Nguoi_Dung as "Người Dùng"
-    
-    package "Hệ thống Quản lý Chi tiêu và Tiện ích" {
-        usecase UC_DangNhap as "Đăng nhập"
-        
-        usecase UC1 as "Quản lý danh mục dịch vụ"
-        usecase UC2 as "Quản lý hóa đơn và chỉ số"
-        usecase UC3 as "Xem cảnh báo thanh toán"
-        usecase UC4 as "Cập nhật thanh toán"
-        usecase UC4_1 as "Upload chứng từ"
-        usecase UC5 as "Xem thống kê và báo cáo"
-        usecase UC5_1 as "Xuất file (PDF/Excel)"
-    }
-    
-    %% Mối quan hệ giữa Actor và các Use Case chính
-    Nguoi_Dung --> UC_DangNhap
-    Nguoi_Dung --> UC1
-    Nguoi_Dung --> UC2
-    Nguoi_Dung --> UC3
-    Nguoi_Dung --> UC4
-    Nguoi_Dung --> UC5
-    
-    %% Mối quan hệ Include (Bắt buộc)
-    UC4 ..> UC4_1 : <<include>>
-    
-    %% Mối quan hệ Extend (Tùy chọn/Mở rộng)
-    UC5 <.. UC5_1 : <<extend>>
+```plantuml
+@startuml
+left to right direction
+actor "Người Dùng" as Nguoi_Dung
 
+package "Hệ thống Quản lý Chi tiêu và Tiện ích" {
+  usecase "Đăng nhập" as UC_DangNhap
+  usecase "Quản lý danh mục dịch vụ" as UC1
+  usecase "Quản lý hóa đơn và chỉ số" as UC2
+  usecase "Xem cảnh báo thanh toán" as UC3
+  usecase "Cập nhật thanh toán" as UC4
+  usecase "Upload chứng từ" as UC4_1
+  usecase "Xem thống kê và báo cáo" as UC5
+  usecase "Xuất file (PDF/Excel)" as UC5_1
+}
+
+Nguoi_Dung --> UC_DangNhap
+Nguoi_Dung --> UC1
+Nguoi_Dung --> UC2
+Nguoi_Dung --> UC3
+Nguoi_Dung --> UC4
+Nguoi_Dung --> UC5
+
+UC4 .> UC4_1 : <<include>>
+UC5 <. UC5_1 : <<extend>>
+@enduml
 ```
 
 *(Chi tiết các kịch bản, luồng sự kiện chính/phụ và tiền/hậu điều kiện của từng chức năng trên được ghi chép đầy đủ tại tài liệu riêng: `docs/dac_ta_usecase.md`)*
@@ -145,88 +141,88 @@ usecaseDiagram
 **1.2. Biểu đồ Lớp (Class Diagram)**
 Dựa trên cấu trúc cơ sở dữ liệu được định nghĩa, hệ thống bao gồm 4 lớp thực thể chính có mối quan hệ trực tiếp với nhau, trong đó có bổ sung lớp Người dùng để quản lý dữ liệu cá nhân hóa.
 
-```mermaid
-classDiagram
-    class NguoiDung {
-        +String MaND
-        +String TenDangNhap
-        +String MatKhau
-        +String HoTen
-        +String Email
-        +Int VaiTro
-        +dangNhap()
-        +dangXuat()
-        +dangKy()
-        +quanLyTaiKhoan()
-    }
-    
-    class NhaCungCap {
-        +String MaNCC
-        +String MaND
-        +String TenNCC
-        +String DiaChi
-        +String SoDienThoai
-        +themNCC()
-        +suaNCC()
-        +xoaNCC()
-    }
+```plantuml
+@startuml
+class NguoiDung {
+  +String MaND
+  +String TenDangNhap
+  +String MatKhau
+  +String HoTen
+  +String Email
+  +Int VaiTro
+  +dangNhap()
+  +dangXuat()
+  +dangKy()
+  +quanLyTaiKhoan()
+}
 
-    class DichVu {
-        +String MaDV
-        +String MaNCC
-        +String MaND
-        +String TenDichVu
-        +String MoTa
-        +themDV()
-        +suaDV()
-        +xoaDV()
-    }
-    
-    class HoaDon {
-        +String MaHD
-        +String MaNCC
-        +String MaDV
-        +String KyCuoc
-        +Date NgayHanChot
-        +Float SoTien
-        +String TrangThaiThanhToan
-        +nhapHoaDon()
-        +capNhatTrangThai()
-        +canhBaoHanChot()
-    }
-    
-    class ChungTu {
-        +String Id
-        +String MaHD
-        +String LoaiChungTu
-        +Date NgayTaiLen
-        +String DuongDanAnh
-        +uploadMinhChung()
-    }
+class NhaCungCap {
+  +String MaNCC
+  +String MaND
+  +String TenNCC
+  +String DiaChi
+  +String SoDienThoai
+  +themNCC()
+  +suaNCC()
+  +xoaNCC()
+}
 
-    NguoiDung "1" -- "0..*" NhaCungCap : Quản lý
-    NguoiDung "1" -- "0..*" DichVu : Quản lý
-    NguoiDung "1" -- "0..*" HoaDon : Quản lý
-    NhaCungCap "1" -- "0..*" DichVu : Cung cấp
-    NhaCungCap "1" -- "0..*" HoaDon : Xuất
-    DichVu "1" -- "0..*" HoaDon : Thuộc
-    HoaDon "1" -- "0..1" ChungTu : Đính kèm
+class DichVu {
+  +String MaDV
+  +String MaNCC
+  +String MaND
+  +String TenDichVu
+  +String MoTa
+  +themDV()
+  +suaDV()
+  +xoaDV()
+}
 
+class HoaDon {
+  +String MaHD
+  +String MaNCC
+  +String MaDV
+  +String KyCuoc
+  +Date NgayHanChot
+  +Float SoTien
+  +String TrangThaiThanhToan
+  +nhapHoaDon()
+  +capNhatTrangThai()
+  +canhBaoHanChot()
+}
+
+class ChungTu {
+  +String Id
+  +String MaHD
+  +String LoaiChungTu
+  +Date NgayTaiLen
+  +String DuongDanAnh
+  +uploadMinhChung()
+}
+
+NguoiDung "1" -- "0..*" NhaCungCap : "Quản lý"
+NguoiDung "1" -- "0..*" DichVu : "Quản lý"
+NguoiDung "1" -- "0..*" HoaDon : "Quản lý"
+NhaCungCap "1" -- "0..*" DichVu : "Cung cấp"
+NhaCungCap "1" -- "0..*" HoaDon : "Xuất"
+DichVu "1" -- "0..*" HoaDon : "Thuộc"
+HoaDon "1" -- "0..1" ChungTu : "Đính kèm"
+@enduml
 ```
 
 **1.3. Biểu đồ Hoạt động (Activity Diagram) - Quy trình thanh toán và lưu chứng từ**
 
-```mermaid
-stateDiagram-v2
-    [*] --> NhapThongTinHoaDon
-    NhapThongTinHoaDon --> KiemTraThongTin
-    KiemTraThongTin --> LuuHoaDon : Hợp lệ
-    KiemTraThongTin --> NhapThongTinHoaDon : Báo lỗi
-    LuuHoaDon --> ChuyenTienQuaNganHang
-    ChuyenTienQuaNganHang --> UploadChungTuGiaoDich
-    UploadChungTuGiaoDich --> CapNhatTrangThaiThanhToan
-    CapNhatTrangThaiThanhToan --> [*]
-
+```plantuml
+@startuml
+[*] --> NhapThongTinHoaDon
+NhapThongTinHoaDon --> KiemTraThongTin
+KiemTraThongTin --> LuuHoaDon : Hợp lệ
+KiemTraThongTin --> NhapThongTinHoaDon : Báo lỗi
+LuuHoaDon --> ChuyenTienQuaNganHang
+ChuyenTienQuaNganHang --> UploadChungTuGiaoDich
+UploadChungTuGiaoDich --> CapNhatTrangThaiThanhToan
+CapNhatTrangThaiThanhToan --> [*]
+@enduml
 ```
 
 *(Bản mô tả và đặc tả chi tiết cho từng Thực thể trong CSDL (Entity) cũng như quy trình các bước trong Biểu đồ Hoạt động (Activity Diagram) được đính kèm tại tài liệu riêng:* `docs/dac_ta_uml.md` *)*

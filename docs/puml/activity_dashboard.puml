@@ -1,0 +1,16 @@
+@startuml
+start
+:Mở Dashboard;
+:Controller lấy thông tin User đang đăng nhập;
+:Truy vấn tổng số Hóa đơn chưa thanh toán & Tổng tiền;
+:Lấy danh sách các Hóa đơn sắp/đã quá hạn chót;
+if (Người dùng có chọn Tháng lọc không?) then (Không chọn)
+  :Lấy tổng tiền các hóa đơn gom nhóm theo Kỳ cước;
+  :Vẽ Biểu đồ Cột - Bar Chart so sánh chi phí theo tháng;
+else (Chọn 1 tháng cụ thể)
+  :Lấy tổng tiền các hóa đơn trong tháng đó, gom nhóm theo Dịch vụ;
+  :Vẽ Biểu đồ Tròn - Pie Chart thể hiện cơ cấu chi phí;
+endif
+:Render giao diện Trang chủ hoàn chỉnh;
+stop
+@enduml
