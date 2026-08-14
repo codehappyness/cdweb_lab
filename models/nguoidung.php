@@ -113,8 +113,34 @@ class NguoiDung
   public static function delete($id)
   {
     $db = DB::getInstance();
-    $sql = "DELETE FROM nguoi_dung WHERE ma_nd = ?";
-    $stmt = $db->prepare($sql);
-    return $stmt->execute([$id]);
+    $db->beginTransaction();
+    try {
+      // 1. Lấy danh sách file chứng từ để xóa vật lý trên server
+      $stmt = $db->prepare("SELECT duong_dan_file FROM chung_tu_dien_tu WHERE hoa_don_id IN (SELECT id FROM hoa_don WHERE nguoi_dung_id = ?)");
+      $stmt->execute([$id]);
+      $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($files as $file) {
+        if (!empty($file['duong_dan_file']) && file_exists($file['duong_dan_file'])) {
+          unlink($file['duong_dan_file']);
+        }
+      }
+
+      // 2. Xóa chứng từ điện tử trong Database
+      $db->prepare("DELETE FROM chung_tu_dien_tu WHERE hoa_don_id IN (SELECT id FROM hoa_don WHERE nguoi_dung_id = ?)")->execute([$id]);
+
+      // 3. Xóa các hóa đơn
+      $db->prepare("DELETE FROM hoa_don WHERE nguoi_dung_id = ?")->execute([$id]);
+
+      // 4. Xóa tài khoản người dùng
+      $sql = "DELETE FROM nguoi_dung WHERE ma_nd = ?";
+      $stmt = $db->prepare($sql);
+      $result = $stmt->execute([$id]);
+
+      $db->commit();
+      return $result;
+    } catch (Exception $e) {
+      $db->rollBack();
+      return false;
+    }
   }
 }
